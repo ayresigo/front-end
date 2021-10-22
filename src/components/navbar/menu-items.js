@@ -4,15 +4,15 @@ export const MenuItems = [
     url: "#",
   },
   {
+    title: "Contato",
+    url: "#",
+  },
+  {
+    title: "Registro",
+    url: "#",
+  },
+  {
     title: "Login",
-    url: "#",
-  },
-  {
-    title: "Services",
-    url: "#",
-  },
-  {
-    title: "Products",
     url: "#",
   },
 ];

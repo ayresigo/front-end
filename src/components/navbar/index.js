@@ -12,7 +12,7 @@ class Navbar extends Component {
     return (
       <S.NavbarWrapper className="navbar">
         <S.LogoWrapper className="navbar-logo">
-          React <i className="fab fa-react" />
+        <i className="fas fa-user-ninja" /> Cryminals 
         </S.LogoWrapper>
         <S.MenuIconWrapper className="menu-icon" onClick={this.handleClick}>
           <i className={this.state.clicked ? "fas fa-times" : "fas fa-bars"} />

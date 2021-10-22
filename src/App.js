@@ -1,15 +1,15 @@
 import { ResetCSS } from "./globals/resetCSS";
+import * as S from "./styled";
 import Navbar from "./components/navbar";
 import PlayerMenu from "./components/player-menu";
 
 function App() {
   return (
-    <div>
+    <S.BackgroundWrapper>
       <ResetCSS />
       <Navbar />
       <PlayerMenu />
-
-    </div>
+    </S.BackgroundWrapper>
   );
 }
 

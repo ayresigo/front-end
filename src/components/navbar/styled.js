@@ -1,15 +1,20 @@
 import styled from "styled-components";
 
 export const NavbarWrapper = styled.nav`
-  background: linear-gradient(
-    90deg,
-    rgb(110, 94, 254) 0%,
-    rgba(73, 63, 251, 1) 100%
+  background-image: linear-gradient(
+    to top,
+    #252525,
+    #1d1d1d,
+    #161616,
+    #0d0d0d,
+    #000000
   );
-  height: 80px;
+  height: 50px;
   display: flex;
   align-items: center;
   font-size: 1rem;
+  box-shadow: 3px 2px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 0px 0px 10px 10px;
 
   @media screen and (max-width: 720px) {
     .navbar {
@@ -21,15 +26,16 @@ export const NavbarWrapper = styled.nav`
       flex-direction: column;
       width: 100%;
       position: absolute;
-      top: 80px;
+      top: 50px;
       left: -100%;
+      border-radius: 0 0 20px 20px;
       animation: growUp 300ms ease;
       transform-origin: bottom center;
       opacity: 1;
     }
 
     .nav-menu.active {
-      background: #6668f4;
+      background: #252525;
       left: 0;
       opacity: 1;
       z-index: 1;
@@ -54,7 +60,7 @@ export const NavbarWrapper = styled.nav`
     }
 
     .nav-links:hover {
-      background-color: #7577fa;
+      background-color: #303030;
       border-radius: 0;
     }
 
@@ -100,7 +106,7 @@ export const LIWrapper = styled.li`
   text-decoration: none;
 
   &:hover {
-    background-color: #6d76f7;
+    background-color: #252525;
     border-radius: 4px;
     transition: all 0.2s ease-out;
   }

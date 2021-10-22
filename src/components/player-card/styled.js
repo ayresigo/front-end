@@ -3,10 +3,11 @@ import styled from "styled-components";
 export const PlayerCardWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: #d9d9d9;
+  background-color: #494b50;
   border-radius: 25px 25px 0 0;
   width: 100%;
   height: 180px;
+  box-shadow: 3px 2px 10px rgba(0, 0, 0, 0.2);
 `;
 
 export const PlayerAvatarWrapper = styled.img`
@@ -20,6 +21,7 @@ export const CurrentStatusWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: #fff;
 `;
 
 export const PlayerInfoWrapper = styled.div`
@@ -27,7 +29,8 @@ export const PlayerInfoWrapper = styled.div`
   flex-direction: column;
   justify-content: space-between;
   margin-right: 15px;
-  width: 100%;
+  width: 250px;
+  color: #fff;
 `;
 
 export const PlayerPersonalInfoWrapper = styled.div`
@@ -37,6 +40,14 @@ export const PlayerPersonalInfoWrapper = styled.div`
   justify-content: flex-start;
 
   margin-top: 8px;
+
+  h1 {
+    font-size: 32px;
+  }
+
+  h2 {
+    font-size: 12px;
+  }
 `;
 
 export const PlayerStatusWrapper = styled.div`
