@@ -8,11 +8,8 @@ export const MenuItems = [
     url: "#",
   },
   {
-    title: "Registro",
+    title: "Conectar",
     url: "#",
-  },
-  {
-    title: "Login",
-    url: "#",
+    icon: "Metamask",
   },
 ];

@@ -1,6 +1,7 @@
 import React from "react";
 import { Component } from "react";
 import { MenuItems } from "./menu-items";
+import MetamaskLogin from "../metamask-login";
 import * as S from "./styled";
 
 class Navbar extends Component {
@@ -12,7 +13,7 @@ class Navbar extends Component {
     return (
       <S.NavbarWrapper className="navbar">
         <S.LogoWrapper className="navbar-logo">
-        <i className="fas fa-user-ninja" /> Cryminals 
+          <i className="fas fa-user-ninja" /> Cryminals
         </S.LogoWrapper>
         <S.MenuIconWrapper className="menu-icon" onClick={this.handleClick}>
           <i className={this.state.clicked ? "fas fa-times" : "fas fa-bars"} />
@@ -23,9 +24,13 @@ class Navbar extends Component {
           {MenuItems.map((item, index) => {
             return (
               <S.LIWrapper key={index}>
-                <a href={item.url} className="nav-links">
-                  {item.title}
-                </a>
+                {item.icon ? (
+                  <MetamaskLogin />
+                ) : (
+                  <a href={item.url} className="nav-links">
+                    {item.title}
+                  </a>
+                )}
               </S.LIWrapper>
             );
           })}

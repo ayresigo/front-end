@@ -93,7 +93,7 @@ export const MenuIconWrapper = styled.div`
 
 export const ULWrapper = styled.ul`
   display: grid;
-  grid-template-columns: repeat(4, auto);
+  grid-template-columns: repeat(3, auto);
   grid-gap: 10px;
   list-style: none;
   text-align: center;
@@ -104,6 +104,13 @@ export const ULWrapper = styled.ul`
 export const LIWrapper = styled.li`
   color: white;
   text-decoration: none;
+  user-select: none;
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
 
   &:hover {
     background-color: #252525;
