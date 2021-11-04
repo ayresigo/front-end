@@ -1,7 +1,6 @@
 import React from "react";
 import { Component } from "react";
 import { MenuItems } from "./menu-items";
-import MetamaskLogin from "../metamask-login";
 import * as S from "./styled";
 
 class Navbar extends Component {
@@ -24,13 +23,10 @@ class Navbar extends Component {
           {MenuItems.map((item, index) => {
             return (
               <S.LIWrapper key={index}>
-                {item.icon ? (
-                  <MetamaskLogin />
-                ) : (
-                  <a href={item.url} className="nav-links">
-                    {item.title}
-                  </a>
-                )}
+                <a href={item.url} className="nav-links">
+                  {item.title}
+                </a>
+                )
               </S.LIWrapper>
             );
           })}

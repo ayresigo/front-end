@@ -81,7 +81,7 @@ const Metamask = () => {
     <ChakraProvider>
       <Button
         colorScheme="pink"
-        variant="solid"
+        variant="ghost"
         onClick={LogIn}
         isLoading={isLoading}
         loadingText={loadingText}

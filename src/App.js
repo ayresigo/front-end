@@ -1,36 +1,20 @@
 import { ResetCSS } from "./globals/resetCSS";
 import * as S from "./styled";
 import Navbar from "./components/navbar";
-// import PlayerMenu from "./components/player-menu";
-// import { ethers } from "ethers";
-// import Metamask from "./components/metamask-handle";
-
-// const App = () => {
-//   return (
-//     <S.BackgroundWrapper>
-//       <ResetCSS />
-//       <Metamask />
-//       {/* <Navbar /> */}
-//       {/* <PlayerMenu /> */}
-//       {/* <AuthTest /> */}
-//     </S.BackgroundWrapper>
-//   );
-// };
-
-// export default App;
 import * as React from "react";
 import { ChakraProvider } from "@chakra-ui/react";
-import Metamask from "./components/metamask-handle";
-import MetaMaskLoginButton from "./components/metamask-login-button";
-import MetamaskTest from "./components/metamask-test";
+import MetamaskHandler from "./components/metamask-test/index.js";
+import MainPlayerMenu from "./components/main-player-menu";
+import MainNavBar from "./components/main-nav-bar";
 
 function App() {
   return (
     <ChakraProvider>
       <ResetCSS />
-      <Metamask colorScheme="teal" size="xs" />
-      <MetaMaskLoginButton />
-      <MetamaskTest />
+      {/* <Navbar /> */}
+      <MainNavBar />
+      <MainPlayerMenu />
+      <MetamaskHandler />
     </ChakraProvider>
   );
 }
