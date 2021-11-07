@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import {
   Button,
-  ButtonGroup,
   ChakraProvider,
   createStandaloneToast,
 } from "@chakra-ui/react";
+import { ethers } from "ethers";
 
-class MetamaskHandler extends Component {
+class Metamask extends Component {
   state = {
     clicked: false,
     isLoggedIn: false,
@@ -86,6 +86,14 @@ class MetamaskHandler extends Component {
 
     var errMsg = "";
     var teste;
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const signature = await signer.signMessage("oi");
+
+    console.log(signer);
+    console.log(signature);
+
     web3.currentProvider.send(
       {
         method: "eth_signTypedData",
@@ -276,4 +284,4 @@ class MetamaskHandler extends Component {
   }
 }
 
-export default MetamaskHandler;
+export default Metamask;

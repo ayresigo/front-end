@@ -1,39 +1,28 @@
 import React from "react";
-import { Component } from "react";
-import { MenuItems } from "./menu-items";
-import * as S from "./styled";
+import { Box, Flex, Spacer, Text } from "@chakra-ui/react";
+import Metamask from "../metamask";
 
-class Navbar extends Component {
-  state = { clicked: false };
-  handleClick = () => {
-    this.setState({ clicked: !this.state.clicked });
-  };
-  render() {
-    return (
-      <S.NavbarWrapper className="navbar">
-        <S.LogoWrapper className="navbar-logo">
-          <i className="fas fa-user-ninja" /> Cryminals
-        </S.LogoWrapper>
-        <S.MenuIconWrapper className="menu-icon" onClick={this.handleClick}>
-          <i className={this.state.clicked ? "fas fa-times" : "fas fa-bars"} />
-        </S.MenuIconWrapper>
-        <S.ULWrapper
-          className={this.state.clicked ? "nav-menu active" : "nav-menu"}
+function Navbar() {
+  return (
+    <Flex>
+      <Box ml="8" mt="1">
+        <Text
+          textAlign="center"
+          bgGradient="linear(to-l, #7928CA, #FF0080)"
+          bgClip="text"
+          fontSize="18"
+          fontWeight="extrabold"
         >
-          {MenuItems.map((item, index) => {
-            return (
-              <S.LIWrapper key={index}>
-                <a href={item.url} className="nav-links">
-                  {item.title}
-                </a>
-                )
-              </S.LIWrapper>
-            );
-          })}
-        </S.ULWrapper>
-      </S.NavbarWrapper>
-    );
-  }
+          Cryminals
+        </Text>
+      </Box>
+      <Spacer />
+      <Box>
+        {/* Add gradient to metamask text */}
+        <Metamask />
+      </Box>
+    </Flex>
+  );
 }
 
 export default Navbar;
