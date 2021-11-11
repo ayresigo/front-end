@@ -4,8 +4,7 @@ import { Component } from "react";
 
 class Home extends Component {
   render() {
-    console.log("home");
-    return <div></div>;
+    return <div>Home</div>;
   }
 }
 

@@ -5,7 +5,7 @@ import { Component } from "react";
 import MenuBar from "../menu-bar";
 import PlayerPofile from "../player-profile";
 
-class PageContent extends Component {
+class Game extends Component {
   render() {
     return (
       <Wrap ml="8" mr="8">
@@ -23,4 +23,4 @@ class PageContent extends Component {
   }
 }
 
-export default PageContent;
+export default Game;

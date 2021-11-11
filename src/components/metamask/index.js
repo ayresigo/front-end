@@ -7,9 +7,10 @@ import axios from "axios";
 import Session from "../session";
 
 class Metamask extends Component {
+  provider = null;
   toast = createStandaloneToast();
-  provider = new ethers.providers.Web3Provider(window.ethereum);
   state = {
+    hasMetamask: false,
     isLoggedIn: false,
     isInRightChain: false,
     isLoading: false,
@@ -112,36 +113,44 @@ class Metamask extends Component {
 
   componentDidMount = async () => {
     //mexe aqui
-    if (!window.ethereum)
-      throw new Error("Metamask não encontrada. Por favor, instale-a.");
+    if (!window.ethereum) this.setState({ hasMetamask: false });
+    else {
+      this.setState({ hasMetamask: true });
+      this.provider = new ethers.providers.Web3Provider(window.ethereum);
+      if (await this.isConnected()) {
+        this.setState({
+          isLoading: false,
+          disabled: false,
+          buttonText:
+            this.state.address.slice(0, 6) +
+            "..." +
+            this.state.address.slice(-4),
+          leftIcon: <MdIcon.MdOutlineLink />,
+        });
+      }
 
-    if (await this.isConnected()) {
-      this.setState({
-        isLoading: false,
-        disabled: false,
-        buttonText:
-          this.state.address.slice(0, 6) + "..." + this.state.address.slice(-4),
-        leftIcon: <MdIcon.MdOutlineLink />,
-      });
+      // await new Session().setIsLoggedIn();
     }
-
-    await new Session().setIsLoggedIn();
   };
 
   render = () => {
-    return (
-      <Button
-        colorScheme="pink"
-        variant="ghost"
-        onClick={this.login}
-        loadingText={this.state.loadingText}
-        isLoading={this.state.isLoading}
-        disabled={this.state.disabled}
-        leftIcon={this.state.leftIcon}
-      >
-        {this.state.buttonText}
-      </Button>
-    );
+    if (this.state.hasMetamask) {
+      return (
+        <Button
+          colorScheme="pink"
+          variant="ghost"
+          onClick={this.login}
+          loadingText={this.state.loadingText}
+          isLoading={this.state.isLoading}
+          disabled={this.state.disabled}
+          leftIcon={this.state.leftIcon}
+        >
+          {this.state.buttonText}
+        </Button>
+      );
+    } else {
+      return null;
+    }
   };
 }
 
