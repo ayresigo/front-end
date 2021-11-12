@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import React from "react";
 import { Component } from "react";
 
