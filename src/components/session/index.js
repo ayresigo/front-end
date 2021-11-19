@@ -49,10 +49,8 @@ export default class Session extends Component {
         userData.money = result.data.money;
         userData.respect = result.data.respect;
         userData.totalpower = result.data.totalpower;
-        
-        await this.setState({ user: userData });
 
-        console.log(this.state.user);
+        await this.setState({ user: userData });
         return true;
       }
     } catch (err) {

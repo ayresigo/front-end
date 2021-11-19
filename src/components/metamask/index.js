@@ -106,30 +106,88 @@ class Metamask extends Component {
     });
 
     if (result.status === 200) {
+      const token_result = await axios({
+        url: "https://localhost:44335/api/v1/Auth/tokenGen",
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          accountId: 1,
+          signatureReq: {
+            address: sign.address,
+            message: sign.message,
+            signature: sign.signature,
+          },
+        },
+      });
+      if (token_result.status === 200) {
+        localStorage.setItem("token", token_result.data.token);
+      }
       new Session().getAccountData(sign.address);
       return true;
     } else return false;
   };
 
   componentDidMount = async () => {
-    //mexe aqui
+    // //mexe aqui
+    // if (!window.ethereum) this.setState({ hasMetamask: false });
+    // else {
+    //   this.setState({ hasMetamask: true });
+    //   this.provider = new ethers.providers.Web3Provider(window.ethereum);
+    //   if (await this.isConnected()) {
+    //     this.setState({
+    //       isLoading: false,
+    //       disabled: false,
+    //       buttonText:
+    //         this.state.address.slice(0, 6) +
+    //         "..." +
+    //         this.state.address.slice(-4),
+    //       leftIcon: <MdIcon.MdOutlineLink />,
+    //     });
+    //   }
+
+    //   // await new Session().setIsLoggedIn();
+    // }
+
     if (!window.ethereum) this.setState({ hasMetamask: false });
     else {
       this.setState({ hasMetamask: true });
       this.provider = new ethers.providers.Web3Provider(window.ethereum);
-      if (await this.isConnected()) {
-        this.setState({
-          isLoading: false,
-          disabled: false,
-          buttonText:
-            this.state.address.slice(0, 6) +
-            "..." +
-            this.state.address.slice(-4),
-          leftIcon: <MdIcon.MdOutlineLink />,
-        });
-      }
 
-      // await new Session().setIsLoggedIn();
+      const token = localStorage.getItem("token");
+      if (token) {
+        // tem cookie
+        // check token
+        const result = await axios({
+          url: `https://localhost:44335/api/v1/Auth/retrieveToken`,
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: {
+            token: token,
+          },
+        });
+        if (await this.isConnected()) {
+          // está conectado
+          if (await this.isConnected()) {
+            this.setState({
+              isLoading: false,
+              disabled: false,
+              buttonText:
+                this.state.address.slice(0, 6) +
+                "..." +
+                this.state.address.slice(-4),
+              leftIcon: <MdIcon.MdOutlineLink />,
+            });
+          }
+        } else {
+          localStorage.removeItem("token");
+        }
+      } else {
+        // não tem cookie
+      }
     }
   };
 

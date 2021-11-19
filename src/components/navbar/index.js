@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Flex, Spacer, Text } from "@chakra-ui/react";
 import Metamask from "../metamask";
 
-function Navbar() {
+function Navbar(props) {
   return (
     <Flex>
       <Box ml="8" mt="1">
@@ -13,7 +13,7 @@ function Navbar() {
           fontSize="18"
           fontWeight="extrabold"
         >
-          Cryminals
+          {props.title}
         </Text>
       </Box>
       <Spacer />

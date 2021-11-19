@@ -2,10 +2,10 @@ import { Wrap, WrapItem } from "@chakra-ui/layout";
 import { Spacer } from "@chakra-ui/react";
 import React from "react";
 import { Component } from "react";
-import MenuBar from "../menu-bar";
-import PlayerPofile from "../player-profile";
+import MenuBar from "../../components/menu-bar";
+import PlayerPofile from "../../components/player-profile";
 
-class Game extends Component {
+class Play extends Component {
   render() {
     return (
       <Wrap ml="8" mr="8">
@@ -23,4 +23,4 @@ class Game extends Component {
   }
 }
 
-export default Game;
+export default Play;
