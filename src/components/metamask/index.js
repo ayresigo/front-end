@@ -3,10 +3,10 @@ import React from "react";
 import { ethers } from "ethers";
 import { Component } from "react";
 import * as MdIcon from "react-icons/md";
-import axios from "axios";
-import Session from "../session";
+import api from "../../services/api";
 
 class Metamask extends Component {
+  _api = new api();
   provider = null;
   toast = createStandaloneToast();
   state = {
@@ -92,39 +92,28 @@ class Metamask extends Component {
   };
 
   checkLogin = async (sign) => {
-    const result = await axios({
-      url: "https://localhost:44335/api/v1/Login/checksign",
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: {
-        address: sign.address,
-        message: sign.message,
-        signature: sign.signature,
-      },
-    });
+    // const result = await axios({
+    //   url: "https://localhost:44335/api/v1/Login/checksign",
+    //   method: "post",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   data: {
+    //     address: sign.address,
+    //     message: sign.message,
+    //     signature: sign.signature,
+    //   },
+    // });
+
+    const result = await this._api.checkSignature(sign, true);
 
     if (result.status === 200) {
-      const token_result = await axios({
-        url: "https://localhost:44335/api/v1/Auth/tokenGen",
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: {
-          accountId: 1,
-          signatureReq: {
-            address: sign.address,
-            message: sign.message,
-            signature: sign.signature,
-          },
-        },
-      });
+      const token_result = await this._api.generateToken(sign, true);
+      
       if (token_result.status === 200) {
         localStorage.setItem("token", token_result.data.token);
       }
-      new Session().getAccountData(sign.address);
+      // new Session().getAccountData(sign.address);
       return true;
     } else return false;
   };
@@ -159,16 +148,7 @@ class Metamask extends Component {
       if (token) {
         // tem cookie
         // check token
-        const result = await axios({
-          url: `https://localhost:44335/api/v1/Auth/retrieveToken`,
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          data: {
-            token: token,
-          },
-        });
+        var res = this._api.checkToken(token, true);
         if (await this.isConnected()) {
           // está conectado
           if (await this.isConnected()) {
