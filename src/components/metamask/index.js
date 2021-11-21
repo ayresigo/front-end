@@ -1,34 +1,68 @@
+import React, { Component } from "react";
 import { Button, createStandaloneToast } from "@chakra-ui/react";
-import React from "react";
-import { ethers } from "ethers";
-import { Component } from "react";
-import * as MdIcon from "react-icons/md";
 import api from "../../services/api";
-
+import * as MdIcon from "react-icons/md";
+import { ethers } from "ethers";
+import { Navigate } from "react-router-dom";
 class Metamask extends Component {
   _api = new api();
   provider = null;
   toast = createStandaloneToast();
+
   state = {
-    hasMetamask: false,
-    isLoggedIn: false,
-    isInRightChain: false,
+    provider: false,
+
+    // button props
+    text: "",
+    loadingText: "Conectando",
     isLoading: false,
-    isSigned: false,
     disabled: false,
-
-    address: "",
-    buttonText: "Conectar com Metamask",
-    loadingText: "",
-
     leftIcon: <MdIcon.MdOutlineAddLink />,
   };
 
-  isConnected = async () => {
-    const accounts = await this.provider.listAccounts();
-    this.setState({ address: accounts[0] });
-    return accounts.length > 0;
+  componentDidMount = async () => {
+    // pre render
+    if (window.ethereum) {
+      this.setState({ provider: true, text: "Conectar Wallet" });
+      this.provider = new ethers.providers.Web3Provider(window.ethereum); // instancia o ethers
+      const token = localStorage.getItem("token");
+      if (await this.isConnected()) {
+        if (token) {
+          try {
+            var checkTokenRes = await this._api.checkToken(token);
+            this.showConnectedButton(checkTokenRes.data.address);
+          } catch (err) {
+            localStorage.removeItem("token");
+            this.reload();
+          }
+        }
+      } else {
+        // se não tiver conectado, apaga o token, se tiver
+        localStorage.removeItem("token");
+      }
+    } else {
+      this.setState({ provider: false, text: "Baixar Metamask" });
+    }
   };
+
+  render() {
+    return (
+      <Button
+        colorScheme="pink"
+        variant="ghost"
+        onClick={() => {
+          if (this.state.provider) return this.login();
+          else return this.downloadMetamask();
+        }}
+        loadingText={this.state.loadingText}
+        isLoading={this.state.isLoading}
+        disabled={this.state.disabled}
+        leftIcon={this.state.leftIcon}
+      >
+        {this.state.text}
+      </Button>
+    );
+  }
 
   login = async () => {
     this.setState({
@@ -40,50 +74,32 @@ class Metamask extends Component {
       await window.ethereum.send("eth_requestAccounts");
       const signer = this.provider.getSigner();
       const sign = await this.signMessage(signer);
-      const isValid = await this.checkLogin(sign);
-      if (isValid) {
-        this.setState({
-          isLoading: false,
-          disabled: true,
-          buttonText:
-            this.state.address.slice(0, 6) +
-            "..." +
-            this.state.address.slice(-4),
-          leftIcon: <MdIcon.MdOutlineLink />,
-        });
-
-        this.toast({
-          position: "bottom",
-          title: "Seja bem vindo!!",
-          description: "Assinatura verificada com sucesso!!",
-          status: "success",
-          duration: 9000,
-          isClosable: true,
-        });
-      }
+      await this._api.checkSignature(sign);
+      this.showConnectedButton(await signer.getAddress());
+      this.makeToast(
+        "Bem vindo!",
+        "Autenticação validada com sucesso!",
+        "success"
+      );
+      // ficou feio, mas é o melhor que ta tendo
+      localStorage.setItem(
+        "token",
+        await (
+          await this._api.generateToken(sign)
+        ).data.token
+      );
+      return (<Navigate to="/play" />);
     } catch (err) {
-      this.setState({
-        isLoading: false,
-        disabled: false,
-      });
-
-      this.toast({
-        position: "bottom",
-        title: "Ocorreu um erro ao conectar",
-        description: `Error: ${err.message}`,
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      this.setState({ isLoading: false, disabled: false });
+      this.makeToast("Erro! :(", err.message, "error");
     }
   };
 
   signMessage = async (signer) => {
     const message = String(Math.floor(Math.random() * 1000000));
-
     const signature = await signer.signMessage(message);
     const address = await signer.getAddress();
-    this.setState({ address: address, isSigned: true });
+    // this.setState({ address: address, isSigned: true });
     return {
       message,
       signature,
@@ -91,105 +107,44 @@ class Metamask extends Component {
     };
   };
 
-  checkLogin = async (sign) => {
-    // const result = await axios({
-    //   url: "https://localhost:44335/api/v1/Login/checksign",
-    //   method: "post",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   data: {
-    //     address: sign.address,
-    //     message: sign.message,
-    //     signature: sign.signature,
-    //   },
-    // });
-
-    const result = await this._api.checkSignature(sign, true);
-
-    if (result.status === 200) {
-      const token_result = await this._api.generateToken(sign, true);
-      
-      if (token_result.status === 200) {
-        localStorage.setItem("token", token_result.data.token);
-      }
-      // new Session().getAccountData(sign.address);
-      return true;
-    } else return false;
+  downloadMetamask = () => {
+    console.log("downloadMetamask");
   };
 
-  componentDidMount = async () => {
-    // //mexe aqui
-    // if (!window.ethereum) this.setState({ hasMetamask: false });
-    // else {
-    //   this.setState({ hasMetamask: true });
-    //   this.provider = new ethers.providers.Web3Provider(window.ethereum);
-    //   if (await this.isConnected()) {
-    //     this.setState({
-    //       isLoading: false,
-    //       disabled: false,
-    //       buttonText:
-    //         this.state.address.slice(0, 6) +
-    //         "..." +
-    //         this.state.address.slice(-4),
-    //       leftIcon: <MdIcon.MdOutlineLink />,
-    //     });
-    //   }
+  makeToast(
+    title,
+    description,
+    status,
+    duration = 9000,
+    isClosable = true,
+    position = "bottom"
+  ) {
+    this.toast({
+      position: position,
+      title: title,
+      description: description,
+      status: status,
+      duration: duration,
+      isClosable: isClosable,
+    });
+  }
 
-    //   // await new Session().setIsLoggedIn();
-    // }
-
-    if (!window.ethereum) this.setState({ hasMetamask: false });
-    else {
-      this.setState({ hasMetamask: true });
-      this.provider = new ethers.providers.Web3Provider(window.ethereum);
-
-      const token = localStorage.getItem("token");
-      if (token) {
-        // tem cookie
-        // check token
-        var res = this._api.checkToken(token, true);
-        if (await this.isConnected()) {
-          // está conectado
-          if (await this.isConnected()) {
-            this.setState({
-              isLoading: false,
-              disabled: false,
-              buttonText:
-                this.state.address.slice(0, 6) +
-                "..." +
-                this.state.address.slice(-4),
-              leftIcon: <MdIcon.MdOutlineLink />,
-            });
-          }
-        } else {
-          localStorage.removeItem("token");
-        }
-      } else {
-        // não tem cookie
-      }
-    }
+  showConnectedButton = (address) => {
+    this.setState({
+      isLoading: false,
+      disabled: true,
+      text: address.slice(0, 6) + "..." + address.slice(-4),
+      leftIcon: <MdIcon.MdOutlineLink />,
+    });
   };
 
-  render = () => {
-    if (this.state.hasMetamask) {
-      return (
-        <Button
-          colorScheme="pink"
-          variant="ghost"
-          onClick={this.login}
-          loadingText={this.state.loadingText}
-          isLoading={this.state.isLoading}
-          disabled={this.state.disabled}
-          leftIcon={this.state.leftIcon}
-        >
-          {this.state.buttonText}
-        </Button>
-      );
-    } else {
-      return null;
-    }
+  isConnected = async () => {
+    const accounts = await this.provider.listAccounts();
+    return accounts.length > 0;
   };
+
+  reload() {
+    window.location.reload();
+  }
 }
-
 export default Metamask;

@@ -1,13 +1,27 @@
 import { Avatar, AvatarBadge } from "@chakra-ui/avatar";
+import { Button } from "@chakra-ui/button";
+import { useDisclosure } from "@chakra-ui/hooks";
 import { Center, Divider, Wrap, WrapItem } from "@chakra-ui/layout";
+import {
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+} from "@chakra-ui/modal";
 
 import React from "react";
 import { Component } from "react";
+import api from "../../services/api";
 import Character from "../character-status";
 import Session from "../session";
 import * as S from "./styled";
 
 class PlayerPofile extends Component {
+  _api = new api();
+
   state = {
     user: {
       username: "username",
@@ -22,29 +36,51 @@ class PlayerPofile extends Component {
     isLoaded: false,
   };
 
-  updateUserData = async () => {
-    const user = await new Session().getUserData();
-    console.log(user);
-    const userData = user;
-    console.log(userData.username);
-    userData.username = user.data.username;
-    userData.address = user.data.address;
-    userData.avatar = user.data.avatar;
-    userData.money = user.data.money;
-    userData.respect = user.data.respect;
-    userData.totalpower = user.data.totalpower;
+  componentDidMount = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      var tokenResponse = await this._api.checkToken(token);
+      var user = await this._api.getAccount(tokenResponse.data.address);
+      var userInfo = user.data;
 
-    await this.setState({ user: userData });
-  };
-
-  componentDidMount = () => {
-    // this.setState({ isLoaded: true });
-    //  this.updateUserData();
+      this.setState({
+        user: {
+          username: userInfo.username,
+          address: userInfo.address,
+          avatar: userInfo.avatar,
+          money: userInfo.money,
+          respect: userInfo.respect,
+          totalpower: userInfo.totalPower,
+        },
+      });
+    } catch (err) {}
   };
 
   render = () => {
+    var isOpen = false;
+
+    if (this.state.user.username === "null") {
+      console.log(this.state.user.username);
+      isOpen = true;
+    }
+
     return (
       <S.MainWrapper>
+        <Modal isOpen={isOpen}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Modal Title</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>Oie</ModalBody>
+
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3}>
+                Close
+              </Button>
+              <Button variant="ghost">Secondary Action</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
         <Avatar size="2xl" src={this.state.user.avatar}>
           <AvatarBadge boxSize="1em" bg="green.500" />
         </Avatar>

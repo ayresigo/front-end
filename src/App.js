@@ -1,14 +1,13 @@
 import { ResetCSS } from "./services/resetCSS";
-import * as React from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import Navbar from "./components/navbar";
+import Metamask from "./components/metamask";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Play from "./pages/play";
 import Home from "./pages/home";
 import SignUp from "./pages/signup";
 import { Component } from "react";
-import Metamask from "./components/metamask";
-
+import PrivateRoute from "./services/private_route";
 class App extends Component {
   render() {
     return (
@@ -17,9 +16,14 @@ class App extends Component {
         <Navbar title="Cryminals" />
         <BrowserRouter>
           <Routes>
+            {/* Private */}
+            <Route exact path="/play" element={<PrivateRoute />}>
+              <Route exact path="/play" element={<Play />} />
+            </Route>
+
             <Route exact path="/" element={<Home />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/play" element={<Play />} />
+            <Route exact path="/signup" element={<SignUp />} />
+            <Route path="*" element={<Home />} />
           </Routes>
         </BrowserRouter>
       </ChakraProvider>

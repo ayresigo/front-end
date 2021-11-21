@@ -5,6 +5,42 @@ class api {
 
   baseURL = "https://localhost:44335/api/v1";
 
+  // ACCOUNT
+  getAccount = async (address, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/Account/getAccount?address=${address}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(address);
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  editUsername = async (address, username, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/Account/editUsername?address=${address}&username=${username}`,
+      method: "patch",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(address + " " + username);
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  // AUTH
   checkSignature = async (sign, log = false) => {
     var res = await axios({
       url: `${this.baseURL}/Auth/checkSignature`,
