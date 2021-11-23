@@ -24,8 +24,9 @@ class api {
   };
 
   editUsername = async (address, username, log = false) => {
+    const base64Username = Buffer.from(username).toString("base64");
     var res = await axios({
-      url: `${this.baseURL}/Account/editUsername?address=${address}&username=${username}`,
+      url: `${this.baseURL}/Account/editUsername?address=${address}&username=${base64Username}`,
       method: "patch",
       headers: {
         "Content-Type": "application/json",
@@ -104,6 +105,88 @@ class api {
 
     return res;
   };
+
+  // CHARACTER
+  createCharacter = async (log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/CharacterMock/createCharacter`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  addCharacter = async (character, address, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/CharacterMock/addCharacter?address=${address}`,
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        owner: address,
+        name: character.name,
+        gender: character.gender,
+        avatar: character.avatar,
+        rarity: character.rarity,
+        power: character.power,
+        moneyRatio: character.moneyRatio,
+        health: character.health,
+        stamina: character.stamina,
+        job: character.job,
+        alignment: character.alignment,
+      },
+    });
+
+    if (log) {
+      console.log(character);
+      console.log(address);
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  getCharacter = async (id, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/CharacterMock/getCharacter?characterId=${id}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(id);
+      console.log(res);
+    }
+
+    return res;
+  }
+
+  getCharacters = async (id, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/CharacterMock/getCharacters?accountId=${id}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(id);
+      console.log(res);
+    }
+
+    return res;
+  }
 }
 
 export default api;

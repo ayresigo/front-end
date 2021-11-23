@@ -1,5 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router";
+import Canvas from "../components/canvas";
 import Play from "../pages/play";
 import api from "./api";
 
@@ -17,7 +18,12 @@ const PrivateRoute = ({ children, ...rest }) => {
   } else {
     auth = false;
   }
-  return auth ? <Play /> : <Navigate to="/" />;
+  // return auth ? <Play /> : <Navigate to="/" />;
+  return (
+    <Play>
+      <Canvas>{children}</Canvas>
+    </Play>
+  );
 };
 
 export default PrivateRoute;

@@ -1,57 +1,78 @@
 import { Avatar, AvatarBadge } from "@chakra-ui/avatar";
 import { Button } from "@chakra-ui/button";
-import { Input } from "@chakra-ui/input";
-import { Center, Divider, Link, Wrap, WrapItem } from "@chakra-ui/layout";
+import {
+  Input,
+  InputGroup,
+  InputAddon,
+  InputLeftAddon,
+  InputRightAddon,
+  InputElement,
+  InputLeftElement,
+  InputRightElement,
+} from "@chakra-ui/input";
+import { Center, Divider, Wrap, WrapItem } from "@chakra-ui/layout";
+import { Link } from "react-router-dom";
 import {
   Modal,
   ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/modal";
-import React, { useEffect, useState } from "react";
-import useCharacters from "../../hooks/character-hooks";
+
+import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 import Character from "../character-status";
 import * as S from "./styled";
 
 function PlayerPofile() {
-  const { characterState, getCharacters } = useCharacters();
-  const [user, setUser] = useState({
-    userId: undefined,
-    username: undefined,
-    address: undefined,
-    avatar: undefined,
-    money: undefined,
-    respect: undefined,
-    totalpower: undefined,
-  });
-  const [modal, setModal] = useState({ isOpen: false, message: undefined });
-  const [async, setAsync] = useState(true);
   const _api = new api();
+  const [user, setUser] = useState({
+    userId: 0,
+    username: "",
+    address: "",
+    avatar: "",
+    money: 0,
+    respect: 0,
+    totalpower: 0,
+  });
+  const [modal, setModal] = useState({ value: "", isOpen: false });
+  const [characters, setCharacters] = useState([]);
+  const [async, setAsync] = useState(true);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    try {
+      _api.editUsername(user.address, modal.value);
+      setModal({ isOpen: false });
+      window.location.reload();
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   useEffect(() => {
-    const fetchCharacters = async () => {
+    const checkToken = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) throw new Error("No token found");
-        var decodedToken = await (await _api.checkToken(token)).data;
-        var account = await (await _api.getAccount(decodedToken.address)).data;
-        // var characters = await (await _api.getCharacter(account.id)).data;
-
+        var tokenResponse = await _api.checkToken(token);
+        var account = await _api.getAccount(tokenResponse.data.address);
+        var userInfo = account.data;
+        var _characters = await _api.getCharacters(userInfo.id);
+        var __characters = _characters.data;
         setUser({
           ...user,
-          userId: account.id,
-          username: account.username,
-          address: account.address,
-          avatar: account.avatar,
-          money: account.money,
-          respect: account.respect,
-          totalpower: account.totalPower,
+          userId: userInfo.id,
+          username: userInfo.username,
+          address: userInfo.address,
+          avatar: userInfo.avatar,
+          money: userInfo.money,
+          respect: userInfo.respect,
+          totalpower: userInfo.totalPower,
         });
-
-        getCharacters(account.id);
+        setCharacters(...characters, __characters);
       } catch (err) {
         console.log(err.message);
       }
@@ -59,38 +80,20 @@ function PlayerPofile() {
     };
 
     if (async) {
-      fetchCharacters();
+      checkToken();
       setAsync(false);
     }
   }, [async]);
 
   useEffect(() => {
-    if (!modal.isOpen) {
-      if (user.username === "null") {
-        setModal({ ...modal, isOpen: true });
-      }
+    if (user.username === "null") {
+      setModal({ ...modal, isOpen: true });
     }
   }, [user, modal]);
 
-  const calculateTotalPower = () => {
-    var totalPower = 0;
-    characterState.characters.map((character, id) => {
-      totalPower += character.power;
-    });
-    console.log(totalPower);
-    return totalPower;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    try {
-      _api.editUsername(user.address, modal.message);
-      setModal({ ...modal, isOpen: false });
-      window.location.reload();
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
+  useEffect(() => {
+    console.log(characters);
+  }, [characters]);
 
   return (
     <S.MainWrapper>
@@ -109,7 +112,7 @@ function PlayerPofile() {
               <br />
               <Input
                 textAlign="center"
-                onChange={(e) => setModal({ ...modal, message: e.target.value })}
+                onChange={(e) => setModal({ ...modal, value: e.target.value })}
               />
             </ModalBody>
             <ModalFooter>
@@ -126,11 +129,7 @@ function PlayerPofile() {
       <S.ProfileWrapper>
         <S.SocialInfoWrapper>
           <h1>{user.username}</h1>
-          {user.address ? (
-            <h2>{user.address.slice(0, 6) + "..." + user.address.slice(-4)}</h2>
-          ) : (
-            <h2>...</h2>
-          )}
+          <h2>{user.address.slice(0, 6) + "..." + user.address.slice(-4)}</h2>
         </S.SocialInfoWrapper>
         <Divider />
         <S.StatusWrapper>
@@ -153,14 +152,14 @@ function PlayerPofile() {
           <li>
             <h2>TotalPower</h2>
             <Divider />
-            <h1>{calculateTotalPower()}</h1>
+            <h1>{user.totalpower}</h1>
           </li>
         </S.StatusWrapper>
       </S.ProfileWrapper>
       <Divider />
       My Gang
       <Wrap justify="center">
-        {characterState.characters.map((character, id) => {
+        {characters.map((character, id) => {
           return (
             <WrapItem p="2">
               <Character

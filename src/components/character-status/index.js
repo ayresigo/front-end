@@ -17,25 +17,8 @@ import { BiTransfer } from "react-icons/bi";
 import React from "react";
 import * as S from "./styled";
 
-const Character = ({
-  id,
-  characterAvatar,
-  currentHealth,
-  totalHealth,
-  currentStamina,
-  totalStamina,
-  currentStatus,
-  rarity,
-}) => {
-  id = 1;
-  characterAvatar = "none";
-  currentHealth = 35;
-  totalHealth = 100;
-  currentStamina = 50;
-  totalStamina = 100;
-  rarity = "Legendary";
-  currentStatus = "Working";
-
+const Character = (props) => {
+  
   const calculateHealth = (currentHealth, totalHealth) => {
     return (currentHealth / totalHealth) * 100;
   };
@@ -44,42 +27,44 @@ const Character = ({
     return (currentStamina / totalStamina) * 100;
   };
 
+  var currentHealth = 100;
+  var currentStamina = 50;
+
   return (
     <S.MainWrapper>
       <Popover placement="top-start">
         <PopoverTrigger>
           <button>
-            <Avatar size="md" src={characterAvatar}>
+            <Avatar size="md" src={props.avatar}>
               <AvatarBadge boxSize="1.15em" bg="green.500" />
             </Avatar>
             <Progress
               mt="1"
-              value={calculateHealth(currentHealth, totalHealth)}
+              value={calculateHealth(currentHealth, props.health)}
               size="xs"
             />
             <Progress
-              value={calculateStamina(currentStamina, totalStamina)}
+              value={calculateStamina(currentStamina, props.stamina)}
               size="xs"
             />
           </button>
         </PopoverTrigger>
         <PopoverContent>
-          <PopoverHeader fontWeight="semibold">#{id}</PopoverHeader>
+          <PopoverHeader fontWeight="semibold">#{props.characterId}</PopoverHeader>
           <PopoverArrow />
           <PopoverCloseButton />
           <PopoverBody>
             <S.BodyWrapper>
               <S.StatusWrapper>
-                <Avatar size="xl" src={characterAvatar} />
-                <h1>{currentStatus}</h1>
+                <Avatar size="xl" src={props.avatar} />
+                {/* <h1>{currentStatus}</h1> */}
               </S.StatusWrapper>
               <S.InfoWrapper>
                 <S.NameWrapper>
-                  <h1>Name</h1>
+                  <h1>{props.name}</h1>
                   <IconButton
                     ml="2"
                     variant="ghost"
-                    aria-label="Call Sage"
                     icon={<EditIcon />}
                     size="xs"
                   />
@@ -87,17 +72,17 @@ const Character = ({
                 <S.HealthWrapper>
                   <S.BadgesWrapper>
                     <Badge variant="outline" colorScheme="orange">
-                      {rarity}
+                      {props.rarity}
                     </Badge>
                   </S.BadgesWrapper>
                   <h2>
                     Health{" "}
                     <h3>
-                      ({currentHealth}/{totalHealth})
+                      ({currentHealth}/{props.health})
                     </h3>
                   </h2>
                   <Progress
-                    value={calculateHealth(currentHealth, totalHealth)}
+                    value={calculateHealth(currentHealth, props.health)}
                     size="xs"
                   />
                 </S.HealthWrapper>
@@ -105,16 +90,16 @@ const Character = ({
                   <h2>
                     Stamina{" "}
                     <h3>
-                      ({currentStamina}/{totalStamina})
+                      ({currentStamina}/{props.stamina})
                     </h3>
                   </h2>
                   <Progress
-                    value={calculateStamina(currentStamina, totalStamina)}
+                    value={calculateStamina(currentStamina, props.stamina)}
                     size="xs"
                   />
                 </S.StaminaWrapper>
-                <h4>Power: 5000</h4>
-                <h4>Money/d: 3000</h4>
+                <h4>Power: {props.power}</h4>
+                <h4>Money/d: {props.moneyRatio}</h4>
                 <Stack direction="row" spacing={4} align="center">
                   <Button
                     leftIcon={<BiTransfer />}

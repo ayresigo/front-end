@@ -88,6 +88,7 @@ class Metamask extends Component {
           await this._api.generateToken(sign)
         ).data.token
       );
+      localStorage.setItem("address",sign.address)
       return (<Navigate to="/play" />);
     } catch (err) {
       this.setState({ isLoading: false, disabled: false });

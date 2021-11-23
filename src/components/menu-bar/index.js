@@ -1,6 +1,8 @@
 import { Button } from "@chakra-ui/button";
 import { Divider } from "@chakra-ui/layout";
+import { Link } from "react-router-dom";
 import React from "react";
+import { MenuItems } from "./menu-items";
 import * as S from "./styled";
 
 function MenuBar() {
@@ -9,18 +11,13 @@ function MenuBar() {
       <S.MenuWrapper>
         <h1>Menu</h1>
         <Divider />
-        <Button variant="ghost" width="100%">
-          Atacar
-        </Button>
-        <Button variant="ghost" width="100%">
-          Roubar
-        </Button>
-        <Button variant="ghost" width="100%">
-          Recrutar
-        </Button>
-        <Button variant="ghost" width="100%">
-          Esconderijo
-        </Button>
+        {MenuItems.map((item, index) => {
+          return (
+            <Button variant="ghost">
+              <Link to={item.url}>{item.title}</Link>
+            </Button>
+          );
+        })}
       </S.MenuWrapper>
     </div>
   );
