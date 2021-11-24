@@ -12,13 +12,13 @@ import {
 import { Progress } from "@chakra-ui/progress";
 import { EditIcon } from "@chakra-ui/icons";
 import { Badge, Stack } from "@chakra-ui/layout";
-import { MdOutlineSell } from "react-icons/md";
+import { MdBloodtype, MdOutlineBloodtype, MdOutlineSell } from "react-icons/md";
 import { BiTransfer } from "react-icons/bi";
 import React from "react";
 import * as S from "./styled";
+import Icon from "@chakra-ui/icon";
 
 const Character = (props) => {
-  
   const calculateHealth = (currentHealth, totalHealth) => {
     return (currentHealth / totalHealth) * 100;
   };
@@ -36,7 +36,9 @@ const Character = (props) => {
         <PopoverTrigger>
           <button>
             <Avatar size="md" src={props.avatar}>
-              <AvatarBadge boxSize="1.15em" bg="green.500" />
+              <AvatarBadge boxSize="1.15em" bg="green.500">
+                <Icon as={MdBloodtype} color="white" w="4" h="4" />
+              </AvatarBadge>
             </Avatar>
             <Progress
               mt="1"
@@ -50,7 +52,9 @@ const Character = (props) => {
           </button>
         </PopoverTrigger>
         <PopoverContent>
-          <PopoverHeader fontWeight="semibold">#{props.characterId}</PopoverHeader>
+          <PopoverHeader fontWeight="semibold">
+            #{props.characterId}
+          </PopoverHeader>
           <PopoverArrow />
           <PopoverCloseButton />
           <PopoverBody>

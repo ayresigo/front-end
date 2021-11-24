@@ -2,7 +2,18 @@ import { Select } from "@chakra-ui/select";
 import React, { useEffect, useState } from "react";
 import Character from "../../components/character-status";
 import { RobberyMock } from "./mock";
+import { Center, Divider, Wrap, WrapItem } from "@chakra-ui/layout";
+import {
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+} from "@chakra-ui/modal";
 import * as S from "./styled";
+import RobberyItem from "../../components/robberyItem";
 
 function Robbery() {
   const [value, setValue] = useState({ value: undefined });
@@ -32,35 +43,15 @@ function Robbery() {
   return (
     <S.MainWrapper>
       Robbery
-      <Select
-        size="sm"
-        placeholder="Escolha quem roubar"
-        textAlign="center"
-        onChange={(e) => setValue({ value: e.target.value })}
-      >
+      <Wrap justify="center">
         {RobberyMock.map((item, id) => {
-          return <option value={item.option}>{item.nome}</option>;
+          return (
+            <WrapItem p="1">
+              <RobberyItem item={item} />
+            </WrapItem>
+          );
         })}
-      </Select>
-      <div>
-        {isSet ? (
-          <>
-            <div>{robberyData.description}</div>
-            <div>{robberyData.difficulty}</div>
-            <div>{robberyData.reward}</div>
-            <div>{robberyData.stamina}</div>
-          </>
-        ) : (
-          <>
-            <div>Descrição</div>
-            <div>Dificuldade</div>
-            <div>Premiação</div>
-            <div>Stamina nescessária</div>
-          </>
-        )}
-      </div>
-      Selecione o personagem:
-      <Character />
+      </Wrap>
     </S.MainWrapper>
   );
 }

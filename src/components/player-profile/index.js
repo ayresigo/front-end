@@ -11,6 +11,7 @@ import {
   ModalOverlay,
 } from "@chakra-ui/modal";
 import React, { useEffect, useState } from "react";
+import { MdBloodtype } from "react-icons/md";
 import useCharacters from "../../hooks/character-hooks";
 import api from "../../services/api";
 import Character from "../character-status";
@@ -108,7 +109,9 @@ function PlayerPofile() {
               <br />
               <Input
                 textAlign="center"
-                onChange={(e) => setModal({ ...modal, message: e.target.value })}
+                onChange={(e) =>
+                  setModal({ ...modal, message: e.target.value })
+                }
               />
             </ModalBody>
             <ModalFooter>
@@ -119,9 +122,7 @@ function PlayerPofile() {
           </form>
         </ModalContent>
       </Modal>
-      <Avatar size="2xl" src={user.avatar}>
-        <AvatarBadge boxSize="1em" bg="green.500" />
-      </Avatar>
+      <Avatar size="2xl" src={user.avatar} />
       <S.ProfileWrapper>
         <S.SocialInfoWrapper>
           <h1>{user.username}</h1>

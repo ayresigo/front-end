@@ -1,4 +1,4 @@
-import { ResetCSS } from "./services/resetCSS";
+import { ResetCSS } from "./globals/resetCSS";
 import { ChakraProvider } from "@chakra-ui/react";
 import Navbar from "./components/navbar";
 import Metamask from "./components/metamask";
