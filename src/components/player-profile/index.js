@@ -77,7 +77,6 @@ function PlayerPofile() {
     characterState.characters.map((character, id) => {
       totalPower += character.power;
     });
-    console.log(totalPower);
     return totalPower;
   };
 
