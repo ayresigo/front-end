@@ -15,6 +15,7 @@ import { MdBloodtype } from "react-icons/md";
 import useCharacters from "../../hooks/character-hooks";
 import api from "../../services/api";
 import Character from "../character-status";
+import { CharacterStatus } from "../character-status/character-status";
 import * as S from "./styled";
 
 function PlayerPofile() {
@@ -27,6 +28,7 @@ function PlayerPofile() {
     money: undefined,
     respect: undefined,
     totalpower: undefined,
+    status: undefined,
   });
   const [modal, setModal] = useState({ isOpen: false, message: undefined });
   const [async, setAsync] = useState(true);
@@ -176,6 +178,9 @@ function PlayerPofile() {
                 power={character.power}
                 rarity={character.rarity}
                 stamina={character.stamina}
+                status={CharacterStatus.filter((item) => {
+                  return item.queryName === character.status;
+                })}
               />
             </WrapItem>
           );

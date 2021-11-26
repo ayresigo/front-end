@@ -14,11 +14,15 @@ import { EditIcon } from "@chakra-ui/icons";
 import { Badge, Stack } from "@chakra-ui/layout";
 import { MdBloodtype, MdOutlineBloodtype, MdOutlineSell } from "react-icons/md";
 import { BiTransfer } from "react-icons/bi";
-import React from "react";
+import React, { useState } from "react";
 import * as S from "./styled";
 import Icon from "@chakra-ui/icon";
 
 const Character = (props) => {
+  const [status, setStatus] = useState("IDLING");
+
+  const getStatus = () => {};
+
   const calculateHealth = (currentHealth, totalHealth) => {
     return (currentHealth / totalHealth) * 100;
   };
@@ -36,8 +40,13 @@ const Character = (props) => {
         <PopoverTrigger>
           <button>
             <Avatar size="md" src={props.avatar}>
-              <AvatarBadge boxSize="1.15em" bg="green.500">
-                <Icon as={MdBloodtype} color="white" w="4" h="4" />
+              <AvatarBadge boxSize="1.15em" bg={props.status[0].bgColor}>
+                {/* <Icon
+                  as={props.status[0].icon}
+                  color={props.status[0].iconColor}
+                  w="4"
+                  h="4"
+                /> */}
               </AvatarBadge>
             </Avatar>
             <Progress

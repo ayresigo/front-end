@@ -4,7 +4,6 @@ import { MdAttachMoney } from "react-icons/md";
 import * as S from "./styled";
 
 function RobberyItem(props) {
-  const [hover, setHover] = useState(false);
   return (
     <S.MainWrapper>
       <S.BackgroundWrapper className="bg" background={props.item.image} />
