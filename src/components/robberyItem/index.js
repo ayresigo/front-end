@@ -9,7 +9,7 @@ function RobberyItem(props) {
       <S.BackgroundWrapper className="bg" background={props.item.image} />
       <S.BlackWrapper className="black" />
       <S.InfoWrapper>
-        <h1>{props.item.nome}</h1>
+        <h1>{props.item.name}</h1>
         <h2>
           <div>Difficulty</div> {props.item.difficulty}
         </h2>

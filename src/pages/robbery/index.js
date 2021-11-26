@@ -16,35 +16,77 @@ import * as S from "./styled";
 import RobberyItem from "../../components/robberyItem";
 import { Button } from "@chakra-ui/button";
 import { Input } from "@chakra-ui/input";
+import useCharacters from "../../hooks/character-hooks";
+import { CharacterStatus } from "../../components/character-status/character-status";
+import api from "../../services/api";
 
 function Robbery() {
-  const [value, setValue] = useState({ value: undefined });
-  const [robberyData, setRobberyData] = useState(null);
-  const [isSet, setIsSet] = useState(false);
-  const [modal, setModal] = useState({ isOpen: false, value: "" });
+  const { characterState, getCharacters } = useCharacters();
+  const [modal, setModal] = useState({ isOpen: false, value: {} });
+  const [robberies, setRobberies] = useState([]);
+  const [robberyInfo, setRobberyInfo] = useState({});
+  const [async, setAsync] = useState(true);
+  const [testTrigger, setTestTrigger] = useState(false);
+  const _api = new api();
 
   useEffect(() => {
-    var robbery = RobberyMock.filter((item) => {
-      return item.option === value.value;
-    });
-    var _robbery = null;
-    if (value.value) {
-      _robbery = robbery[0];
+    const _getRobberies = async () => {
+      var _robberies = await (await _api.getRobberies(1)).data;
+      setRobberies(_robberies);
+      setAsync(false);
+    };
 
-      setRobberyData({
-        nome: _robbery.nome,
-        option: _robbery.option,
-        description: _robbery.description,
-        difficulty: _robbery.difficulty,
-        reward: _robbery.reward,
-        stamina: _robbery.stamina,
+    if (async) _getRobberies();
+  }, [robberies, async]);
+
+  const getDataFromChild = (val) => {
+    if (robberyInfo.participants) {
+      setRobberyInfo({
+        ...robberyInfo,
+        participants: [...robberyInfo.participants, { characterId: val }],
       });
-      setIsSet(true);
+    } else {
+      setRobberyInfo({
+        ...robberyInfo,
+        participants: [{ characterId: val }],
+      });
     }
-  }, [value]);
+  };
+
+  const startRobbery = async () => {
+    const token = await localStorage.getItem("token");
+    setRobberyInfo({ ...robberyInfo, token });
+    setTestTrigger(true);
+  };
+
+  useEffect(() => {
+    if (testTrigger) {
+      const stringfy = JSON.stringify(robberyInfo);
+      console.log(stringfy);
+      _api.startRobery(stringfy, true);
+    }
+    console.log(robberyInfo);
+  }, [robberyInfo, testTrigger]);
 
   return (
     <S.MainWrapper>
+      Robbery
+      <Wrap justify="center">
+        {robberies.map((robbery, id) => {
+          return (
+            <WrapItem p="1">
+              <button
+                onClick={(e) => {
+                  setModal({ isOpen: true, value: { robbery } });
+                  setRobberyInfo({ ...robberyInfo, robberyId: robbery.id });
+                }}
+              >
+                <RobberyItem item={robbery} />
+              </button>
+            </WrapItem>
+          );
+        })}
+      </Wrap>
       <Modal isOpen={modal.isOpen}>
         <ModalOverlay />
         <ModalContent>
@@ -52,30 +94,67 @@ function Robbery() {
           {/* <ModalCloseButton
             onClick={(e) => setModal({ ...modal, isOpen: false })}
           /> */}
-          <ModalBody>Escolha o pesonagem que vai executar a ação</ModalBody>
+          {modal.value.robbery ? (
+            <ModalBody>
+              <div>Nome: {modal.value.robbery.name}</div>
+              <div>Descrição: {modal.value.robbery.description}</div>
+              <div>Dificuldade: {modal.value.robbery.difficulty}</div>
+              <div>Poder necessário: {modal.value.robbery.powerNeeded}</div>
+              <div>Premiação: {modal.value.robbery.reward}</div>
+              <div>Stamina necessária: {modal.value.robbery.stamina}</div>
+              <div>
+                Participantes: {modal.value.robbery.minPart} min. ~{" "}
+                {modal.value.robbery.maxPart} max.
+              </div>
+              <br />
+              Selecione o(s) participante(s):
+            </ModalBody>
+          ) : null}
+          <Wrap justify="center">
+            {characterState.characters.map((character) => {
+              if (character.status === "IDLING") {
+                return (
+                  <WrapItem p="2">
+                    <Character
+                      sendData={getDataFromChild}
+                      selectable={true}
+                      alignment={character.alignment}
+                      avatar={character.avatar}
+                      genter={character.gender}
+                      health={character.health}
+                      characterId={character.id}
+                      job={character.job}
+                      moneyRatio={character.moneyRatio}
+                      name={character.name}
+                      owner={character.owner}
+                      power={character.power}
+                      rarity={character.rarity}
+                      stamina={character.stamina}
+                      status={CharacterStatus.filter((item) => {
+                        return item.queryName === character.status;
+                      })}
+                    />
+                  </WrapItem>
+                );
+              } else {
+                return null;
+              }
+            })}
+          </Wrap>
           <ModalFooter>
             <Button
               variant="ghost"
               type="submit"
-              onClick={(e) => setModal({ ...modal, isOpen: false })}
+              onClick={(e) => {
+                setModal({ ...modal, isOpen: false });
+                startRobbery();
+              }}
             >
               Confirmar
             </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-      Robbery
-      <Wrap justify="center">
-        {RobberyMock.map((item, id) => {
-          return (
-            <WrapItem p="1">
-              <button onClick={(e) => setModal({ ...modal, isOpen: true })}>
-                <RobberyItem item={item} />
-              </button>
-            </WrapItem>
-          );
-        })}
-      </Wrap>
     </S.MainWrapper>
   );
 }

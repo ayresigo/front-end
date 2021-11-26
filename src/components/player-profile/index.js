@@ -31,6 +31,7 @@ function PlayerPofile() {
     status: undefined,
   });
   const [modal, setModal] = useState({ isOpen: false, message: undefined });
+  const [currentTime, setCurrentTime] = useState(0);
   const [async, setAsync] = useState(true);
   const _api = new api();
 
@@ -55,6 +56,8 @@ function PlayerPofile() {
         });
 
         getCharacters(account.id);
+        setCurrentTime(await (await _api.getTime()).data);
+        console.log(currentTime)
       } catch (err) {
         console.log(err.message);
       }
@@ -166,6 +169,8 @@ function PlayerPofile() {
           return (
             <WrapItem p="2">
               <Character
+                timeLeft={(character.statusChanged + character.statusTime) - currentTime}
+                showSellingOptions={true}
                 alignment={character.alignment}
                 avatar={character.avatar}
                 genter={character.gender}

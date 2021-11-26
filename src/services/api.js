@@ -169,7 +169,7 @@ class api {
     }
 
     return res;
-  }
+  };
 
   getCharacters = async (id, log = false) => {
     var res = await axios({
@@ -186,7 +186,62 @@ class api {
     }
 
     return res;
-  }
+  };
+
+  // ROBBERIES
+  getRobberies = async (status, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/Robbery/getRobberies?status=${status}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(status);
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  startRobery = async (data, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/Robbery/startRobbery`,
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        robberyId: data.robberyId,
+        senderAddress: data.senderAddress,
+        participants: data.participants,
+      },
+    });
+
+    if (log) {
+      console.log(data);
+      console.log(res);
+    }
+  };
+
+  // UTILS
+  getTime = async (log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/Utils/getTime`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(res);
+    }
+
+    return res;
+  };
 }
 
 export default api;

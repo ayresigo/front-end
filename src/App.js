@@ -10,51 +10,65 @@ import { Component } from "react";
 import PrivateRoute from "./services/private_route";
 import CharacterProvider from "./providers/character-context";
 import Robbery from "./pages/robbery";
+import TimeProvider from "./providers/time-context";
+import Timer from "./pages/timer";
 class App extends Component {
   render() {
     return (
       <ChakraProvider>
         <CharacterProvider>
-          <ResetCSS />
-          <Navbar title="Cryminals" />
-          <BrowserRouter>
-            <Routes>
-              {/* Private */}
-              <Route
-                exact
-                path="/recruit"
-                element={
-                  <PrivateRoute>
-                    <Recruit />
-                  </PrivateRoute>
-                }
-              ></Route>
+          <TimeProvider>
+            <ResetCSS />
+            <Navbar title="Cryminals" />
+            <BrowserRouter>
+              <Routes>
+                {/* Private */}
+                <Route
+                  exact
+                  path="/recruit"
+                  element={
+                    <PrivateRoute>
+                      <Recruit />
+                    </PrivateRoute>
+                  }
+                ></Route>
 
-              <Route
-                exact
-                path="/play"
-                element={
-                  <PrivateRoute>
-                    <Home />
-                  </PrivateRoute>
-                }
-              ></Route>
+                <Route
+                  exact
+                  path="/play"
+                  element={
+                    <PrivateRoute>
+                      <Home />
+                    </PrivateRoute>
+                  }
+                ></Route>
 
-              <Route
-                exact
-                path="/robbery"
-                element={
-                  <PrivateRoute>
-                    <Robbery />
-                  </PrivateRoute>
-                }
-              ></Route>
+                <Route
+                  exact
+                  path="/robbery"
+                  element={
+                    <PrivateRoute>
+                      <Robbery />
+                    </PrivateRoute>
+                  }
+                ></Route>
 
-              <Route exact path="/" element={<Home />} />
-              {/* <Route exact path="/recruit" element={<Recruit />} /> */}
-              <Route path="*" element={<Home />} />
-            </Routes>
-          </BrowserRouter>
+                <Route
+                  exact
+                  path="/timer"
+                  element={
+                    <PrivateRoute>
+                      <Timer/>
+                    </PrivateRoute>
+                  }
+                ></Route>
+
+                <Route exact path="/" element={<Home />} />
+                {/* <Route exact path="/recruit" element={<Recruit />} /> */}
+                <Route path="*" element={<Home />} />
+              </Routes>
+            </BrowserRouter>
+          </TimeProvider>
         </CharacterProvider>
       </ChakraProvider>
     );

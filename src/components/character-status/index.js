@@ -12,17 +12,22 @@ import {
 import { Progress } from "@chakra-ui/progress";
 import { EditIcon } from "@chakra-ui/icons";
 import { Badge, Stack } from "@chakra-ui/layout";
-import { MdBloodtype, MdOutlineBloodtype, MdOutlineSell } from "react-icons/md";
+import {
+  MdBloodtype,
+  MdOutlineBloodtype,
+  MdOutlineCheckCircleOutline,
+  MdOutlineFamilyRestroom,
+  MdOutlineSell,
+} from "react-icons/md";
 import { BiTransfer } from "react-icons/bi";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as S from "./styled";
 import Icon from "@chakra-ui/icon";
+import Timer from "../../pages/timer";
 
 const Character = (props) => {
-  const [status, setStatus] = useState("IDLING");
-
-  const getStatus = () => {};
-
+  const [count, setCount] = useState(true);
+  const [isSelected, setIsSelected] = useState(false);
   const calculateHealth = (currentHealth, totalHealth) => {
     return (currentHealth / totalHealth) * 100;
   };
@@ -31,8 +36,18 @@ const Character = (props) => {
     return (currentStamina / totalStamina) * 100;
   };
 
+  const handleClick = (e) => {
+    props.sendData(props.characterId);
+  };
+
   var currentHealth = 100;
   var currentStamina = 50;
+
+  useEffect(() => {
+    if (props.timeLeft <= 0) {
+      setCount(false);
+    }
+  }, [props.timeLeft]);
 
   return (
     <S.MainWrapper>
@@ -41,7 +56,7 @@ const Character = (props) => {
           <button>
             <Avatar size="md" src={props.avatar}>
               <AvatarBadge boxSize="1.15em" bg={props.status[0].bgColor}>
-                {/* <Icon
+                {/* <Iconx'
                   as={props.status[0].icon}
                   color={props.status[0].iconColor}
                   w="4"
@@ -70,7 +85,16 @@ const Character = (props) => {
             <S.BodyWrapper>
               <S.StatusWrapper>
                 <Avatar size="xl" src={props.avatar} />
-                {/* <h1>{currentStatus}</h1> */}
+                <h1>{props.status[0].name}</h1>
+
+                {count ? (
+                  <>
+                    <h2>Time left: </h2>
+                    <Timer seconds={props.timeLeft} />
+                  </>
+                ) : (
+                  <Button>Claim</Button>
+                )}
               </S.StatusWrapper>
               <S.InfoWrapper>
                 <S.NameWrapper>
@@ -113,24 +137,39 @@ const Character = (props) => {
                 </S.StaminaWrapper>
                 <h4>Power: {props.power}</h4>
                 <h4>Money/d: {props.moneyRatio}</h4>
-                <Stack direction="row" spacing={4} align="center">
+                {props.showSellingOptions ? (
+                  <Stack direction="row" spacing={4} align="center">
+                    <Button
+                      leftIcon={<BiTransfer />}
+                      variant="ghost"
+                      size="sm"
+                      disabled
+                    >
+                      Transfer
+                    </Button>
+                    <Button
+                      rightIcon={<MdOutlineSell />}
+                      variant="ghost"
+                      size="sm"
+                      disabled
+                    >
+                      Sell
+                    </Button>
+                  </Stack>
+                ) : null}
+
+                {props.selectable ? (
                   <Button
-                    leftIcon={<BiTransfer />}
-                    variant="ghost"
+                    rightIcon={<MdOutlineCheckCircleOutline />}
                     size="sm"
-                    disabled
-                  >
-                    Transfer
-                  </Button>
-                  <Button
-                    rightIcon={<MdOutlineSell />}
                     variant="ghost"
-                    size="sm"
-                    disabled
+                    onClick={() => {
+                      handleClick();
+                    }}
                   >
-                    Sell
+                    Select
                   </Button>
-                </Stack>
+                ) : null}
               </S.InfoWrapper>
             </S.BodyWrapper>
           </PopoverBody>
