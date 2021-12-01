@@ -57,7 +57,6 @@ function PlayerPofile() {
 
         getCharacters(account.id);
         setCurrentTime(await (await _api.getTime()).data);
-        console.log(currentTime)
       } catch (err) {
         console.log(err.message);
       }
@@ -169,12 +168,15 @@ function PlayerPofile() {
           return (
             <WrapItem p="2">
               <Character
-                timeLeft={(character.statusChanged + character.statusTime) - currentTime}
+                timeLeft={
+                  character.statusChanged + character.statusTime - currentTime
+                }
                 showSellingOptions={true}
                 alignment={character.alignment}
                 avatar={character.avatar}
                 genter={character.gender}
                 health={character.health}
+                currentHealth={character.currentHealth}
                 characterId={character.id}
                 job={character.job}
                 moneyRatio={character.moneyRatio}
@@ -183,6 +185,7 @@ function PlayerPofile() {
                 power={character.power}
                 rarity={character.rarity}
                 stamina={character.stamina}
+                currentStamina={character.currentStamina}
                 status={CharacterStatus.filter((item) => {
                   return item.queryName === character.status;
                 })}

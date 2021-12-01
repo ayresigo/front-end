@@ -2,6 +2,13 @@ import styled from "styled-components";
 
 export const MainWrapper = styled.div``;
 
+export const ButtonWrapper = styled.button`
+  .selected {
+    font-size: x-small;
+    text-align: center;
+  }
+`;
+
 export const BodyWrapper = styled.div`
   display: flex;
 `;

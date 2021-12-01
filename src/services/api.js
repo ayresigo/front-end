@@ -215,7 +215,7 @@ class api {
       },
       data: {
         robberyId: data.robberyId,
-        senderAddress: data.senderAddress,
+        token: data.token,
         participants: data.participants,
       },
     });

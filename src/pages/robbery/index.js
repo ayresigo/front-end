@@ -61,12 +61,12 @@ function Robbery() {
 
   useEffect(() => {
     if (testTrigger) {
+      console.log(robberyInfo);
       const stringfy = JSON.stringify(robberyInfo);
-      console.log(stringfy);
-      _api.startRobery(stringfy, true);
+      // console.log(stringfy);
+      _api.startRobery(robberyInfo, true);
     }
-    console.log(robberyInfo);
-  }, [robberyInfo, testTrigger]);
+  }, [testTrigger]);
 
   return (
     <S.MainWrapper>

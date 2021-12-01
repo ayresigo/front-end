@@ -14,7 +14,10 @@ function Recruit() {
     setClick(false);
     setCharacter(_character.data);
     var address = localStorage.getItem("address");
-    if (address) await _api.addCharacter(_character.data, address);
+    if (address) {
+      await _api.addCharacter(_character.data, address);
+      window.location.reload();
+    }
   };
   return (
     <>
