@@ -186,9 +186,7 @@ function PlayerPofile() {
                 rarity={character.rarity}
                 stamina={character.stamina}
                 currentStamina={character.currentStamina}
-                status={CharacterStatus.filter((item) => {
-                  return item.queryName === character.status;
-                })}
+                status={character.status}
               />
             </WrapItem>
           );

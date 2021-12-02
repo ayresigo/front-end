@@ -19,10 +19,11 @@ import { Input } from "@chakra-ui/input";
 import useCharacters from "../../hooks/character-hooks";
 import { CharacterStatus } from "../../components/character-status/character-status";
 import api from "../../services/api";
+import { useDisclosure } from "@chakra-ui/hooks";
 
 function Robbery() {
   const { characterState, getCharacters } = useCharacters();
-  const [modal, setModal] = useState({ isOpen: false, value: {} });
+  const [modal, setModal] = useState({});
   const [robberies, setRobberies] = useState([]);
   const [robberyInfo, setRobberyInfo] = useState({});
   const [async, setAsync] = useState(true);
@@ -62,12 +63,11 @@ function Robbery() {
   useEffect(() => {
     if (testTrigger) {
       console.log(robberyInfo);
-      const stringfy = JSON.stringify(robberyInfo);
-      // console.log(stringfy);
       _api.startRobery(robberyInfo, true);
     }
   }, [testTrigger]);
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <S.MainWrapper>
       Robbery
@@ -76,9 +76,10 @@ function Robbery() {
           return (
             <WrapItem p="1">
               <button
-                onClick={(e) => {
-                  setModal({ isOpen: true, value: { robbery } });
+                onClick={() => {
+                  setModal({ robbery });
                   setRobberyInfo({ ...robberyInfo, robberyId: robbery.id });
+                  onOpen();                  
                 }}
               >
                 <RobberyItem item={robbery} />
@@ -87,24 +88,25 @@ function Robbery() {
           );
         })}
       </Wrap>
-      <Modal isOpen={modal.isOpen}>
+      <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Escolher personagem</ModalHeader>
+          <ModalCloseButton />
           {/* <ModalCloseButton
             onClick={(e) => setModal({ ...modal, isOpen: false })}
           /> */}
-          {modal.value.robbery ? (
+          {modal.robbery ? (
             <ModalBody>
-              <div>Nome: {modal.value.robbery.name}</div>
-              <div>Descrição: {modal.value.robbery.description}</div>
-              <div>Dificuldade: {modal.value.robbery.difficulty}</div>
-              <div>Poder necessário: {modal.value.robbery.powerNeeded}</div>
-              <div>Premiação: {modal.value.robbery.reward}</div>
-              <div>Stamina necessária: {modal.value.robbery.stamina}</div>
+              <div>Nome: {modal.robbery.name}</div>
+              <div>Descrição: {modal.robbery.description}</div>
+              <div>Dificuldade: {modal.robbery.difficulty}</div>
+              <div>Poder necessário: {modal.robbery.powerNeeded}</div>
+              <div>Premiação: {modal.robbery.reward}</div>
+              <div>Stamina necessária: {modal.robbery.stamina}</div>
               <div>
-                Participantes: {modal.value.robbery.minPart} min. ~{" "}
-                {modal.value.robbery.maxPart} max.
+                Participantes: {modal.robbery.minPart} min. ~{" "}
+                {modal.robbery.maxPart} max.
               </div>
               <br />
               Selecione o(s) participante(s):
@@ -112,7 +114,7 @@ function Robbery() {
           ) : null}
           <Wrap justify="center">
             {characterState.characters.map((character) => {
-              if (character.status === "IDLING") {
+              if (character.status.id === 1) {
                 return (
                   <WrapItem p="2">
                     <Character
@@ -130,9 +132,7 @@ function Robbery() {
                       power={character.power}
                       rarity={character.rarity}
                       stamina={character.stamina}
-                      status={CharacterStatus.filter((item) => {
-                        return item.queryName === character.status;
-                      })}
+                      status={character.status}
                     />
                   </WrapItem>
                 );
@@ -145,8 +145,8 @@ function Robbery() {
             <Button
               variant="ghost"
               type="submit"
-              onClick={(e) => {
-                setModal({ ...modal, isOpen: false });
+              onClick={() => {
+                onClose();
                 startRobbery();
               }}
             >

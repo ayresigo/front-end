@@ -61,10 +61,10 @@ const Character = (props) => {
             <PopoverTrigger>
               <S.ButtonWrapper isSelected={isSelected}>
                 <Avatar size="md" src={props.avatar}>
-                  <AvatarBadge boxSize="1.15em" bg={props.status[0].bgColor}>
+                  <AvatarBadge boxSize="1.15em" bg={props.status.bgColor}>
                     {/* <Iconx'
-                  as={props.status[0].icon}
-                  color={props.status[0].iconColor}
+                  as={props.status.icon}
+                  color={props.status.iconColor}
                   w="4"
                   h="4"
                 /> */}
@@ -92,7 +92,7 @@ const Character = (props) => {
                 <S.BodyWrapper>
                   <S.StatusWrapper>
                     <Avatar size="xl" src={props.avatar} />
-                    <h1>{props.status[0].name}</h1>
+                    <h1>{props.status.name}</h1>
 
                     {count ? (
                       <>
