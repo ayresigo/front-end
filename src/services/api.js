@@ -188,6 +188,23 @@ class api {
     return res;
   };
 
+  fetchCharacters = async (id, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/CharacterMock/fetchCharacters?accountId=${id}`,
+      method: "patch",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(id);
+      console.log(res);
+    }
+
+    return res;
+  };
+
   // ROBBERIES
   getRobberies = async (status, log = false) => {
     var res = await axios({
@@ -206,7 +223,7 @@ class api {
     return res;
   };
 
-  startRobery = async (data, log = false) => {
+  startRobery = async (data, log = true) => {
     var res = await axios({
       url: `${this.baseURL}/Robbery/startRobbery`,
       method: "post",

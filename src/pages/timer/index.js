@@ -1,13 +1,21 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import api from "../../services/api";
 
 const Timer = (props) => {
+  const _api = new api();
+
   // initialize timeLeft with the seconds prop
   const [timeLeft, setTimeLeft] = useState(props.seconds);
 
   useEffect(() => {
     // exit early when we reach 0
-    if (timeLeft <= 0) return;
+    if (timeLeft <= 0) {
+      if (props.fetchCharacters) {
+        _api.fetchCharacters();
+        return;
+      } else return;
+    }
 
     // save intervalId to clear the interval when the
     // component re-renders

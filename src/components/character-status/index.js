@@ -24,6 +24,7 @@ import React, { useState, useEffect, useRef } from "react";
 import * as S from "./styled";
 import Icon from "@chakra-ui/icon";
 import Timer from "../../pages/timer";
+import api from "../../services/api";
 
 const Character = (props) => {
   const [count, setCount] = useState(true);
@@ -97,7 +98,10 @@ const Character = (props) => {
                     {count ? (
                       <>
                         <h2>Time left: </h2>
-                        <Timer seconds={props.timeLeft} />
+                        <Timer
+                          seconds={props.timeLeft}
+                          fetchCharacters={true}
+                        />
                       </>
                     ) : (
                       <Button>Claim</Button>
