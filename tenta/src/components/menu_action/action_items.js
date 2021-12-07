@@ -5,15 +5,15 @@ export const MenuItems = [
     },
     {
       title: "Recruit",
-      url: "#",
+      url: "/recruit",
     },
     {
       title: "Roubos",
-      url: "#",
+      url: "/robbery",
     },
     {
       title: "Emboscada",
-      url: "#",
+      url: "/ambush",
     },
     {
       title: "Hospital",
