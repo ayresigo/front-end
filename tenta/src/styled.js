@@ -5,5 +5,5 @@ export const MainDiv = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  background-color: gray;
+  background-image: linear-gradient(to top, #000000, #121212, #1d1d1d, #282828, #343434);
 `;

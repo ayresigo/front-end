@@ -7,11 +7,8 @@ import PlayerMenu from "../../components/menu_player";
 function Play({ children }) {
   return (
     <div>
+      <PlayerMenu />
       <Wrap ml="8" mr="8">
-        <WrapItem>
-          <PlayerMenu />
-        </WrapItem>
-        <Spacer />
         <WrapItem>{children}</WrapItem>
         <Spacer />
         <WrapItem>

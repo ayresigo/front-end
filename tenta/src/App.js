@@ -12,10 +12,23 @@ import Whitepaper from "./pages/whitepaper";
 import * as S from "./styled";
 import Journal from "./pages/journal";
 
+import { Global, css } from "@emotion/react";
+const GlobalStyles = css`
+  /*
+    This will hide the focus indicator if the element receives focus    via the mouse,
+    but it will still show up on keyboard focus.
+  */
+  .js-focus-visible :focus:not([data-focus-visible-added]) {
+    outline: none;
+    box-shadow: none;
+  }
+`;
+
 function App() {
   return (
     <S.MainDiv>
       <ChakraProvider>
+        <Global styles={GlobalStyles} />
         <ResetCSS />
         <NavBar />
         <BrowserRouter>
