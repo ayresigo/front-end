@@ -2,34 +2,50 @@ import React, { useEffect, useState } from "react";
 import * as S from "./styled";
 import useCharacters from "../../hooks/character-hooks";
 import { Avatar } from "@chakra-ui/avatar";
-import { Button } from "@chakra-ui/button";
+import { Button, IconButton } from "@chakra-ui/button";
 import { Skeleton } from "@chakra-ui/skeleton";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/tabs";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { Divider } from "@chakra-ui/layout";
-import { Heading, Text, Wrap, WrapItem } from "@chakra-ui/react";
+import {
+  Tooltip,
+  Icon,
+  Heading,
+  Text,
+  Wrap,
+  WrapItem,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuIcon,
+  MenuCommand,
+  MenuDivider,
+} from "@chakra-ui/react";
 import {
   MdOutlineKeyboardArrowLeft,
   MdOutlineKeyboardArrowRight,
+  MdRefresh,
+  MdSort,
 } from "react-icons/md";
 import Character from "../character";
 import api from "../../services/api";
+import { EditIcon } from "@chakra-ui/icons";
+import { createStandaloneToast } from "@chakra-ui/toast";
 
 function PlayerMenu() {
+  const [pagination, setPagination] = useState({
+    offset: 0,
+    itemsPerPage: 9,
+    totalItems: 0,
+  });
+  const toast = createStandaloneToast();
   const [pageIsLoaded, setPageIsLoaded] = useState(false);
   const { characterState, getCharacters } = useCharacters();
-  const [user, setUser] = useState({
-    id: null,
-    username: "Username",
-    address: "Address",
-    avatar: null,
-    money: 0,
-    respect: 0,
-    power: 0,
-    inventory: [{}],
-    characters: [{}],
-    enterprises: [{}],
-  });
+  const [user, setUser] = useState({});
   const toggleLoad = () => {
     if (pageIsLoaded) setPageIsLoaded(false);
     else setPageIsLoaded(true);
@@ -47,7 +63,7 @@ function PlayerMenu() {
       try {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("No token found");
-        var account = await (await _api.getAccount(token)).data;
+        var account = await (await _api.fetchAccount(token)).data;
 
         setUser({
           ...user,
@@ -60,11 +76,18 @@ function PlayerMenu() {
           power: account.power,
         });
 
-        getCharacters(account.id);
+        getCharacters(token);
       } catch (err) {
-        console.log(err.message);
+        toast({
+          position: "bottom",
+          title: "Erro :(",
+          description: err.message,
+          status: "error",
+        });
       }
     };
+
+    fetchAccount();
   }, []);
 
   return (
@@ -77,17 +100,30 @@ function PlayerMenu() {
         className="avatar"
         marginTop="15px"
       >
-        <Avatar size="2xl" />
+        <Avatar size="2xl" src={user.avatar || null} />
       </Skeleton>
-
-      <Skeleton startColor="#00173B" endColor="#0D121A" isLoaded={pageIsLoaded}>
-        <Heading size="lg" maxW="300px" isTruncated>
-          Username
+      <Skeleton
+        startColor="#00173B"
+        endColor="#0D121A"
+        isLoaded={pageIsLoaded}
+        width="150px"
+        justifyContent="center"
+        display="flex"
+      >
+        <Heading size="lg" maxW="175px" isTruncated>
+          {user.username || "Username"}
         </Heading>
       </Skeleton>
-      <Skeleton startColor="#00173B" endColor="#0D121A" isLoaded={pageIsLoaded}>
-        <Text as="sup" maxWidth="100px" isTruncated>
-          Address
+      <Skeleton
+        startColor="#00173B"
+        endColor="#0D121A"
+        isLoaded={pageIsLoaded}
+        width="100px"
+        // justifyContent="center"
+        // display="flex"
+      >
+        <Text fontSize="xs" maxWidth="100px" marginBottom="8px" isTruncated>
+          {user.address || "Address"}
         </Text>
       </Skeleton>
       <S.UserInfo>
@@ -98,7 +134,7 @@ function PlayerMenu() {
             endColor="#0D121A"
             isLoaded={pageIsLoaded}
           >
-            <h3>150</h3>
+            <h3>{user.money || "0"}</h3>
           </Skeleton>
         </S.StatusDiv>
         <S.StatusDiv>
@@ -108,7 +144,7 @@ function PlayerMenu() {
             endColor="#0D121A"
             isLoaded={pageIsLoaded}
           >
-            <h3>150</h3>
+            <h3>{user.respect || "0"}</h3>
           </Skeleton>
         </S.StatusDiv>
         <S.StatusDiv>
@@ -118,7 +154,7 @@ function PlayerMenu() {
             endColor="#0D121A"
             isLoaded={pageIsLoaded}
           >
-            <h3>150</h3>
+            <h3>{user.power || "0"}</h3>
           </Skeleton>
         </S.StatusDiv>
       </S.UserInfo>
@@ -127,7 +163,7 @@ function PlayerMenu() {
         isFitted
         colorScheme="gray"
         size="sm"
-        align="center"
+        // align="center"
         onChange={(index) => setTabIndex(index)}
         bg={bg}
         defaultIndex={1}
@@ -143,14 +179,67 @@ function PlayerMenu() {
             <p>My Items!</p>
           </TabPanel>
           <TabPanel p="2">
+            <Menu closeOnSelect={false}>
+              <Tooltip label="Sort by" placement="top">
+                <MenuButton
+                  as={IconButton}
+                  variant="ghost"
+                  icon={<Icon w={5} h={5} as={MdSort} />}
+                  size="xs"
+                />
+              </Tooltip>
+              <MenuList minWidth="240px" bgColor="black">
+                <MenuOptionGroup defaultValue="asc" title="Order" type="radio">
+                  <MenuItemOption value="id">Id</MenuItemOption>
+                  <MenuItemOption value="rarity">Rarity</MenuItemOption>
+                  <MenuItemOption value="power">Power</MenuItemOption>
+                  <MenuItemOption value="status">Status</MenuItemOption>
+                </MenuOptionGroup>
+              </MenuList>
+            </Menu>
+            <Tooltip label="Refresh" placement="top">
+              <IconButton
+                isLazy
+                variant="ghost"
+                size="xs"
+                icon={<Icon w={5} h={5} as={MdRefresh} />}
+              />
+            </Tooltip>
             <S.PanelContent>
               <S.ArrowButtons>
                 <MdOutlineKeyboardArrowLeft />
               </S.ArrowButtons>
               <Wrap justify="center">
-                <WrapItem p="1">
-                  <Character item />
-                </WrapItem>
+                {characterState.characters
+                  .slice(
+                    pagination.offset,
+                    pagination.offset + pagination.itemsPerPage
+                  )
+                  .map((character, id) => {
+                    return (
+                      <WrapItem p="2">
+                        <Character
+                          item
+                          // showSellingOptions={true}
+                          affiliation={character.affiliation}
+                          avatar={character.avatar}
+                          gender={character.gender}
+                          health={character.health}
+                          currentHealth={character.currentHealth}
+                          characterId={character.id}
+                          job={character.job}
+                          name={character.name}
+                          owner={character.owner}
+                          power={character.power}
+                          rarity={character.rarity}
+                          stamina={character.stamina}
+                          currentStamina={character.currentStamina}
+                          status={character.status}
+                          creationDate={character.creationDate}
+                        />
+                      </WrapItem>
+                    );
+                  })}
               </Wrap>
               <S.ArrowButtons>
                 <MdOutlineKeyboardArrowRight />

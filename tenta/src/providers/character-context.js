@@ -15,8 +15,8 @@ const CharacterProvider = ({ children }) => {
 
   const _api = new api();
 
-  const getCharacters = async (id) => {
-    var characters = await (await _api.getCharacters(id)).data;
+  const getCharacters = async (token) => {
+    var characters = await (await _api.fetchCharacters(token)).data;
     setCharacterState({ ...characterState, characters: characters });
   };
 

@@ -16,7 +16,7 @@ export const MainDiv = styled.div`
   position: absolute;
   flex-direction: column;
   align-items: center;
-  width: 300px;
+  width: 350px;
   height: 80vh;
 
   border-radius: 15px;
@@ -58,5 +58,51 @@ export const ArrowButtons = styled.button`
 export const PanelContent = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between
+  justify-content: space-between;
+`;
+
+export const PopoverBody = styled.div`
+  display: flex;
+  align-items: flex-start;
+`;
+
+export const Badge = styled.div`
+  text-align: center;
+  margin-top: -2px;
+`;
+
+// export const HealthAndStamina = styled.div`
+//   display: flex;
+//   justify-content: space-evenly;
+//   text-align: center;
+// `;
+
+export const ProgressLabel = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const PopoverName = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .a {
+    display: flex;
+    align-items: center;
+  }
+`;
+
+export const PopoverAvatarAndStatus = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+export const PopoverCharacterInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-left: 8px;
 `;

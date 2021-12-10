@@ -62,9 +62,25 @@ class api {
     return res;
   };
 
-  getMyAccount = async (token, log = false) => {
+  fetchAccount = async (token, log = false) => {
     var res = await axios({
-      url: `${this.baseURL}/accounts/getMyAccount?token=${token}`,
+      url: `${this.baseURL}/accounts/fetchAccount?token=${token}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  fetchCharacters = async (token, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/accounts/fetchCharacters?token=${token}`,
       method: "get",
       headers: {
         "Content-Type": "application/json",
