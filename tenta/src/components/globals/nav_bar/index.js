@@ -6,8 +6,8 @@ import * as S from "./styled";
 const NavBar = () => {
   return (
     <S.MainDiv>
-      Cryminals
-      <CurrentTime />
+      <S.CryminalsTitle>Cryminals</S.CryminalsTitle>
+      <CurrentTime className="currentTime" />
       <Metamask />
     </S.MainDiv>
   );

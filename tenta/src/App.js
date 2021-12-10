@@ -13,6 +13,7 @@ import * as S from "./styled";
 import Journal from "./pages/journal";
 
 import { Global, css } from "@emotion/react";
+import CharacterProvider from "./providers/character-context";
 const GlobalStyles = css`
   /*
     This will hide the focus indicator if the element receives focus    via the mouse,
@@ -28,29 +29,31 @@ function App() {
   return (
     <S.MainDiv>
       <ChakraProvider>
-        <Global styles={GlobalStyles} />
-        <ResetCSS />
-        <NavBar />
-        <BrowserRouter>
-          <Routes>
-            {/* Private */}
-            <Route
-              exact
-              path="/play"
-              element={
-                <PrivateRoute>
-                  <Journal />
-                </PrivateRoute>
-              }
-            ></Route>
+        <CharacterProvider>
+          <Global styles={GlobalStyles} />
+          <ResetCSS />
+          <NavBar />
+          <BrowserRouter>
+            <Routes>
+              {/* Private */}
+              <Route
+                exact
+                path="/play"
+                element={
+                  <PrivateRoute>
+                    <Journal />
+                  </PrivateRoute>
+                }
+              ></Route>
 
-            <Route exact path="/" element={<Home />} />
-            <Route exact path="/whitelist" element={<Whitelist />} />
-            <Route exact path="/whitepaper" element={<Whitepaper />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-        <Footer />
+              <Route exact path="/" element={<Home />} />
+              <Route exact path="/whitelist" element={<Whitelist />} />
+              <Route exact path="/whitepaper" element={<Whitepaper />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+          <Footer />
+        </CharacterProvider>
       </ChakraProvider>
     </S.MainDiv>
   );

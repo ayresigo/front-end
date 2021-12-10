@@ -36,7 +36,7 @@ class api {
         address: data.address,
         message: data.message,
         signature: data.signature,
-      }
+      },
     });
 
     if (log) {
@@ -49,6 +49,38 @@ class api {
   getTokenData = async (token, log = false) => {
     var res = await axios({
       url: `${this.baseURL}/auth/retrieveTokenData?token=${token}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  getMyAccount = async (token, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/accounts/getMyAccount?token=${token}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  getAccount = async (address, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/accounts/getAccount?address=${address}`,
       method: "get",
       headers: {
         "Content-Type": "application/json",

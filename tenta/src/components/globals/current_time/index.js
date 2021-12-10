@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../../../services/api";
 
 const CurrentTime = () => {
-  const [currentTime, setCurrentTime] = useState("oi");
+  const [currentTime, setCurrentTime] = useState("0");
   const [async, setAsync] = useState(true);
   const _api = new api();
 

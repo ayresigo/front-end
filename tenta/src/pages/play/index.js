@@ -8,7 +8,7 @@ function Play({ children }) {
   return (
     <div>
       <PlayerMenu />
-      <Wrap ml="8" mr="8">
+      <Wrap marginLeft="320px" mr="8">
         <WrapItem>{children}</WrapItem>
         <Spacer />
         <WrapItem>
