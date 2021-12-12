@@ -37,7 +37,7 @@ function Character(props) {
         <button>
           <S.Character>
             <AvatarGroup max={2} spacing="-15">
-              <Avatar src={props.avatar}>
+              <Avatar src={props.avatar} className="avatar">
                 <AvatarBadge
                   borderColor="green.900"
                   bg="green.500"

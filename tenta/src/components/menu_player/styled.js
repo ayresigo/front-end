@@ -44,6 +44,11 @@ export const UserInfo = styled.div`
   h2 {
     text-align: center;
   }
+
+  img {
+    -webkit-box-reflect: below 4 px
+      linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
+  }
 `;
 
 export const StatusDiv = styled.div`
@@ -53,6 +58,10 @@ export const StatusDiv = styled.div`
 export const ArrowButtons = styled.button`
   transform: scale(2);
   color: ${(props) => props.color || "rgba(255, 255, 255, 0.5)"};
+
+  /* :disabled {
+    color: rgba(255, 255, 255, 0);
+  } */
 `;
 
 export const PanelContent = styled.div`

@@ -24,6 +24,7 @@ import {
   MenuIcon,
   MenuCommand,
   MenuDivider,
+  Spinner,
 } from "@chakra-ui/react";
 import {
   MdOutlineKeyboardArrowLeft,
@@ -35,28 +36,48 @@ import Character from "../character";
 import api from "../../services/api";
 import { EditIcon } from "@chakra-ui/icons";
 import { createStandaloneToast } from "@chakra-ui/toast";
+import { id } from "ethers/lib/utils";
 
 function PlayerMenu() {
   const [pagination, setPagination] = useState({
     offset: 0,
     itemsPerPage: 9,
     totalItems: 0,
+    firstPage: true,
+    lastPage: true,
   });
-  const toast = createStandaloneToast();
   const [pageIsLoaded, setPageIsLoaded] = useState(false);
+  const [charactersIsLoaded, setCharactersIsLoaded] = useState(false);
   const { characterState, getCharacters } = useCharacters();
   const [user, setUser] = useState({});
-  const toggleLoad = () => {
-    if (pageIsLoaded) setPageIsLoaded(false);
-    else setPageIsLoaded(true);
-  };
+  const [tabIndex, setTabIndex] = useState(1);
+  const [orderBy, setOrderBy] = useState("id_asc");
+
+  const toast = createStandaloneToast();
   const colors = useColorModeValue(
     ["green.900", "blue.900", "red.900"],
     ["green.500", "blue.900", "red.900"]
   );
-  const [tabIndex, setTabIndex] = useState(1);
   const bg = colors[tabIndex];
   const _api = new api();
+
+  const toggleLoad = () => {
+    if (pageIsLoaded) {
+      setPageIsLoaded(false);
+      setCharactersIsLoaded(false);
+    } else {
+      setPageIsLoaded(true);
+      setCharactersIsLoaded(true);
+    }
+  };
+
+  const calculateTotalPower = () => {
+    var totalPower = 0;
+    characterState.characters.map((character, id) => {
+      totalPower += character.power;
+    });
+    return totalPower;
+  };
 
   useEffect(() => {
     const fetchAccount = async () => {
@@ -89,6 +110,46 @@ function PlayerMenu() {
 
     fetchAccount();
   }, []);
+
+  useEffect(() => {
+    var length = characterState.characters.length;
+    setPagination({ ...pagination, totalItems: length });
+  }, [characterState]);
+
+  useEffect(() => {
+    if (
+      pagination.totalItems > pagination.itemsPerPage &&
+      pagination.offset < pagination.totalItems - pagination.itemsPerPage
+    ) {
+      setPagination({ ...pagination, lastPage: false });
+    } else {
+      setPagination({ ...pagination, lastPage: true });
+    }
+  }, [pagination.offset, pagination.totalItems]);
+
+  useEffect(() => {
+    if (pagination.offset < pagination.itemsPerPage) {
+      // setPagination({ ...pagination, firstPage: true });
+    } else {
+      setPagination({ ...pagination, firstPage: false });
+    }
+  }, [pagination.offset, pagination.totalItems]);
+
+  useEffect(() => {
+    console.log(pagination);
+  }, [pagination.lastPage]);
+  // useEffect(() => {
+  //   console.log(`pagination.totalItems: ${pagination.totalItems}`);
+  //   if (
+  //     pagination.totalItems > pagination.itemsPerPage &&
+  //     pagination.offset < pagination.totalItems - 9
+  //   ) {
+  //     console.log("1");
+  //     setPagination({ ...pagination, rightArrowIsDisabled: false });
+  //   } else {
+  //     console.log("2");
+  //   }
+  // }, [pagination]);
 
   return (
     <S.MainDiv>
@@ -154,7 +215,7 @@ function PlayerMenu() {
             endColor="#0D121A"
             isLoaded={pageIsLoaded}
           >
-            <h3>{user.power || "0"}</h3>
+            <h3>{calculateTotalPower() || "0"}</h3>
           </Skeleton>
         </S.StatusDiv>
       </S.UserInfo>
@@ -168,6 +229,7 @@ function PlayerMenu() {
         bg={bg}
         defaultIndex={1}
         marginTop="15px"
+        width="100%"
       >
         <TabList>
           <Tab _selected={{ color: "white", bg: "green.500" }}>Inventory</Tab>
@@ -190,10 +252,42 @@ function PlayerMenu() {
               </Tooltip>
               <MenuList minWidth="240px" bgColor="black">
                 <MenuOptionGroup defaultValue="asc" title="Order" type="radio">
-                  <MenuItemOption value="id">Id</MenuItemOption>
-                  <MenuItemOption value="rarity">Rarity</MenuItemOption>
-                  <MenuItemOption value="power">Power</MenuItemOption>
-                  <MenuItemOption value="status">Status</MenuItemOption>
+                  <MenuItemOption
+                    value="id"
+                    onClick={() => {
+                      if (orderBy === "id_asc") setOrderBy("id_desc");
+                      else setOrderBy("id_asc");
+                    }}
+                  >
+                    Id
+                  </MenuItemOption>
+                  <MenuItemOption
+                    value="rarity"
+                    onClick={() => {
+                      if (orderBy === "rarity_asc") setOrderBy("rarity_desc");
+                      else setOrderBy("rarity_asc");
+                    }}
+                  >
+                    Rarity
+                  </MenuItemOption>
+                  <MenuItemOption
+                    value="power"
+                    onClick={() => {
+                      if (orderBy === "power_desc") setOrderBy("power_asc");
+                      else setOrderBy("power_desc");
+                    }}
+                  >
+                    Power
+                  </MenuItemOption>
+                  <MenuItemOption
+                    value="status"
+                    onClick={() => {
+                      if (orderBy === "status_asc") setOrderBy("status_desc");
+                      else setOrderBy("status_asc");
+                    }}
+                  >
+                    Status
+                  </MenuItemOption>
                 </MenuOptionGroup>
               </MenuList>
             </Menu>
@@ -203,49 +297,118 @@ function PlayerMenu() {
                 variant="ghost"
                 size="xs"
                 icon={<Icon w={5} h={5} as={MdRefresh} />}
+                onClick={async () => {
+                  const token = localStorage.getItem("token");
+                  setCharactersIsLoaded(false);
+                  await getCharacters(token);
+                  setPagination({
+                    ...pagination,
+                    totalItems: characterState.characters.length,
+                  });
+                  setTimeout(function () {
+                    setCharactersIsLoaded(true);
+                  }, 100);
+                }}
               />
             </Tooltip>
             <S.PanelContent>
-              <S.ArrowButtons>
+              <S.ArrowButtons
+                disabled={pagination.firstPage}
+                onClick={() => {
+                  if (pagination.offset > pagination.itemsPerPage) {
+                    var newOffset = pagination.offset - pagination.itemsPerPage;
+                    setPagination({
+                      ...pagination,
+                      offset: newOffset,
+                    });
+                  }
+                }}
+              >
                 <MdOutlineKeyboardArrowLeft />
               </S.ArrowButtons>
+
               <Wrap justify="center">
-                {characterState.characters
-                  .slice(
-                    pagination.offset,
-                    pagination.offset + pagination.itemsPerPage
-                  )
-                  .map((character, id) => {
-                    return (
-                      <WrapItem p="2">
-                        <Character
-                          item
-                          // showSellingOptions={true}
-                          affiliation={character.affiliation}
-                          avatar={character.avatar}
-                          gender={character.gender}
-                          health={character.health}
-                          currentHealth={character.currentHealth}
-                          characterId={character.id}
-                          job={character.job}
-                          name={character.name}
-                          owner={character.owner}
-                          power={character.power}
-                          rarity={character.rarity}
-                          stamina={character.stamina}
-                          currentStamina={character.currentStamina}
-                          status={character.status}
-                          creationDate={character.creationDate}
-                        />
-                      </WrapItem>
-                    );
-                  })}
+                {charactersIsLoaded ? (
+                  characterState.characters
+                    .sort((a, b) => {
+                      switch (orderBy) {
+                        case "id_desc":
+                          return b.id - a.id;
+                        case "name_asc":
+                          return a.name.localeCompare(b.name);
+                        case "name_desc":
+                          return b.name.localeCompare(a.name);
+                        case "power_asc":
+                          return a.power - b.power;
+                        case "power_desc":
+                          return b.power - a.power;
+                        default:
+                          return a.id - b.id;
+                      }
+                    })
+                    .slice(
+                      pagination.offset,
+                      pagination.offset + pagination.itemsPerPage
+                    )
+                    .map((character, id) => {
+                      return (
+                        <WrapItem p="2">
+                          <Character
+                            item
+                            // showSellingOptions={true}
+                            affiliation={character.affiliation}
+                            avatar={character.avatar}
+                            gender={character.gender}
+                            health={character.health}
+                            currentHealth={character.currentHealth}
+                            characterId={character.id}
+                            job={character.job}
+                            name={character.name}
+                            owner={character.owner}
+                            power={character.power}
+                            rarity={character.rarity}
+                            stamina={character.stamina}
+                            currentStamina={character.currentStamina}
+                            status={character.status}
+                            creationDate={character.creationDate}
+                          />
+                        </WrapItem>
+                      );
+                    })
+                ) : (
+                  <Spinner />
+                )}
               </Wrap>
-              <S.ArrowButtons>
+
+              <S.ArrowButtons
+                disabled={pagination.lastPage}
+                onClick={() => {
+                  console.log(pagination.lastPage);
+                  if (
+                    pagination.offset <
+                    pagination.totalItems - pagination.itemsPerPage
+                  ) {
+                    var newOffset = pagination.offset + pagination.itemsPerPage;
+                    setPagination({
+                      ...pagination,
+                      offset: newOffset,
+                    });
+                  }
+                }}
+              >
                 <MdOutlineKeyboardArrowRight />
               </S.ArrowButtons>
             </S.PanelContent>
-            Recruit
+            {pagination.lastPage ? (
+              <>
+                {pagination.totalItems} of {pagination.totalItems}
+              </>
+            ) : (
+              <>
+                {pagination.offset + pagination.itemsPerPage} of 
+                {pagination.totalItems}
+              </>
+            )}
           </TabPanel>
           <TabPanel p="2">
             <p>My Enterprises!</p>

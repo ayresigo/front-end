@@ -12,7 +12,7 @@ function Play({ children }) {
         <WrapItem>{children}</WrapItem>
         <Spacer />
         <WrapItem>
-          <ActionMenu />
+          {/* <ActionMenu /> */}
         </WrapItem>
       </Wrap>
     </div>
