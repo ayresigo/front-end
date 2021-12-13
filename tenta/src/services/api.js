@@ -110,6 +110,22 @@ class api {
     return res;
   };
 
+  getRobberies = async (status = 1, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/robberies/getRobberies?status=${status}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(res);
+    }
+
+    return res;
+  };
+
   // validateSignature = async (data, log = false) => {
   //   var res = await axios({
   //     url: `${this.baseURL}/auth/validateSignature`,

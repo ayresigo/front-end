@@ -45,9 +45,10 @@ function PlayerMenu() {
     totalItems: 0,
     firstPage: true,
     lastPage: true,
+    click: true,
   });
-  const [pageIsLoaded, setPageIsLoaded] = useState(false);
-  const [charactersIsLoaded, setCharactersIsLoaded] = useState(false);
+  const [pageIsLoaded, setPageIsLoaded] = useState(true);
+  const [charactersIsLoaded, setCharactersIsLoaded] = useState(true);
   const { characterState, getCharacters } = useCharacters();
   const [user, setUser] = useState({});
   const [tabIndex, setTabIndex] = useState(1);
@@ -79,11 +80,26 @@ function PlayerMenu() {
     return totalPower;
   };
 
+  const showCharactersSpinner = async (token) => {
+    try {
+      setCharactersIsLoaded(false);
+      await getCharacters(token);
+      setCharactersIsLoaded(true);
+    } catch (err) {
+      toast({
+        position: "bottom",
+        title: "Erro :(",
+        description: err.message,
+        status: "error",
+      });
+    }
+  };
+
   useEffect(() => {
     const fetchAccount = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) throw new Error("No token found");
+        if (!token) throw new Error("Invalid token.");
         var account = await (await _api.fetchAccount(token)).data;
 
         setUser({
@@ -113,31 +129,60 @@ function PlayerMenu() {
 
   useEffect(() => {
     var length = characterState.characters.length;
-    setPagination({ ...pagination, totalItems: length });
+    setPagination({ ...pagination, click: true, totalItems: length });
   }, [characterState]);
 
   useEffect(() => {
-    if (
-      pagination.totalItems > pagination.itemsPerPage &&
-      pagination.offset < pagination.totalItems - pagination.itemsPerPage
-    ) {
-      setPagination({ ...pagination, lastPage: false });
-    } else {
-      setPagination({ ...pagination, lastPage: true });
+    if (pagination.click) {
+      if (pagination.totalItems < pagination.itemsPerPage) {
+        setPagination({
+          ...pagination,
+          click: false,
+          lastPage: true,
+          firstPage: true,
+        });
+      } else if (
+        pagination.offset >= pagination.itemsPerPage &&
+        pagination.offset < pagination.totalItems - pagination.itemsPerPage
+      ) {
+        setPagination({
+          ...pagination,
+          click: false,
+          lastPage: false,
+          firstPage: false,
+        });
+      } else if (
+        pagination.offset < pagination.itemsPerPage &&
+        pagination.totalItems > pagination.itemsPerPage
+      ) {
+        setPagination({
+          ...pagination,
+          click: false,
+          lastPage: false,
+          firstPage: true,
+        });
+      } else if (
+        pagination.totalItems - pagination.itemsPerPage < pagination.offset &&
+        pagination.offset > 0
+      ) {
+        setPagination({
+          ...pagination,
+          click: false,
+          lastPage: true,
+          firstPage: false,
+        });
+      }
     }
-  }, [pagination.offset, pagination.totalItems]);
+  }, [pagination]);
 
-  useEffect(() => {
-    if (pagination.offset < pagination.itemsPerPage) {
-      // setPagination({ ...pagination, firstPage: true });
-    } else {
-      setPagination({ ...pagination, firstPage: false });
-    }
-  }, [pagination.offset, pagination.totalItems]);
+  // useEffect(() => {
+  //   if (pagination.offset < pagination.itemsPerPage) {
+  //     // setPagination({ ...pagination, firstPage: true });
+  //   } else {
+  //     setPagination({ ...pagination, firstPage: false });
+  //   }
+  // }, [pagination.offset, pagination.totalItems]);
 
-  useEffect(() => {
-    console.log(pagination);
-  }, [pagination.lastPage]);
   // useEffect(() => {
   //   console.log(`pagination.totalItems: ${pagination.totalItems}`);
   //   if (
@@ -215,7 +260,7 @@ function PlayerMenu() {
             endColor="#0D121A"
             isLoaded={pageIsLoaded}
           >
-            <h3>{calculateTotalPower() || "0"}</h3>
+            <h3>{calculateTotalPower() || <Spinner size="sm" />}</h3>
           </Skeleton>
         </S.StatusDiv>
       </S.UserInfo>
@@ -299,15 +344,12 @@ function PlayerMenu() {
                 icon={<Icon w={5} h={5} as={MdRefresh} />}
                 onClick={async () => {
                   const token = localStorage.getItem("token");
-                  setCharactersIsLoaded(false);
-                  await getCharacters(token);
+                  getCharacters(token);
                   setPagination({
                     ...pagination,
                     totalItems: characterState.characters.length,
                   });
-                  setTimeout(function () {
-                    setCharactersIsLoaded(true);
-                  }, 100);
+                  // setCharactersIsLoaded(true);
                 }}
               />
             </Tooltip>
@@ -315,11 +357,12 @@ function PlayerMenu() {
               <S.ArrowButtons
                 disabled={pagination.firstPage}
                 onClick={() => {
-                  if (pagination.offset > pagination.itemsPerPage) {
+                  if (pagination.offset > 0) {
                     var newOffset = pagination.offset - pagination.itemsPerPage;
                     setPagination({
                       ...pagination,
                       offset: newOffset,
+                      click: true,
                     });
                   }
                 }}
@@ -328,7 +371,7 @@ function PlayerMenu() {
               </S.ArrowButtons>
 
               <Wrap justify="center">
-                {charactersIsLoaded ? (
+                {characterState.isLoaded ? (
                   characterState.characters
                     .sort((a, b) => {
                       switch (orderBy) {
@@ -383,7 +426,6 @@ function PlayerMenu() {
               <S.ArrowButtons
                 disabled={pagination.lastPage}
                 onClick={() => {
-                  console.log(pagination.lastPage);
                   if (
                     pagination.offset <
                     pagination.totalItems - pagination.itemsPerPage
@@ -391,6 +433,7 @@ function PlayerMenu() {
                     var newOffset = pagination.offset + pagination.itemsPerPage;
                     setPagination({
                       ...pagination,
+                      click: true,
                       offset: newOffset,
                     });
                   }
@@ -405,7 +448,8 @@ function PlayerMenu() {
               </>
             ) : (
               <>
-                {pagination.offset + pagination.itemsPerPage} of 
+                {pagination.offset + pagination.itemsPerPage}
+                {" of "}
                 {pagination.totalItems}
               </>
             )}

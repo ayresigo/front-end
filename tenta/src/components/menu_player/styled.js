@@ -13,7 +13,7 @@ export const MainDiv = styled.div`
   margin-left: 8px;
   color: white;
   display: flex;
-  position: absolute;
+  /* position: absolute; */
   flex-direction: column;
   align-items: center;
   width: 350px;
@@ -59,9 +59,9 @@ export const ArrowButtons = styled.button`
   transform: scale(2);
   color: ${(props) => props.color || "rgba(255, 255, 255, 0.5)"};
 
-  /* :disabled {
+  :disabled {
     color: rgba(255, 255, 255, 0);
-  } */
+  }
 `;
 
 export const PanelContent = styled.div`

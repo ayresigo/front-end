@@ -16,7 +16,7 @@ export const MainDiv = styled.div`
   margin-left: 8px;
   color: white;
   display: flex;
-  position: absolute;
+  /* position: absolute; */
   flex-direction: column;
   align-items: center;
   width: 300px;

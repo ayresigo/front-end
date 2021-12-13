@@ -14,6 +14,7 @@ import Journal from "./pages/journal";
 
 import { Global, css } from "@emotion/react";
 import CharacterProvider from "./providers/character-context";
+import Robbery from "./pages/robbery";
 const GlobalStyles = css`
   /*
     This will hide the focus indicator if the element receives focus    via the mouse,
@@ -42,6 +43,15 @@ function App() {
                 element={
                   <PrivateRoute>
                     <Journal />
+                  </PrivateRoute>
+                }
+              ></Route>
+              <Route
+                exact
+                path="/robbery"
+                element={
+                  <PrivateRoute>
+                    <Robbery />
                   </PrivateRoute>
                 }
               ></Route>

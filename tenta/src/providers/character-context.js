@@ -9,15 +9,21 @@ export const CharacterContext = createContext({
 const CharacterProvider = ({ children }) => {
   const [characterState, setCharacterState] = useState({
     hasCharacter: false,
-    loading: false,
+    isLoaded: false,
     characters: [],
   });
 
   const _api = new api();
 
   const getCharacters = async (token) => {
+    setCharacterState({ ...characterState, isLoaded: false });
     var characters = await (await _api.fetchCharacters(token)).data;
-    setCharacterState({ ...characterState, characters: characters });
+
+    setCharacterState({
+      ...characterState,
+      characters: characters,
+      isLoaded: true,
+    });
   };
 
   const value = {
