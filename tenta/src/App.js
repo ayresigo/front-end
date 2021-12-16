@@ -1,5 +1,5 @@
-import { ResetCSS } from "./utils/resetCSS";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ResetCSS } from "./styles/resetCSS";
+import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/home";
 import PrivateRoute from "./utils/private_route";
@@ -15,6 +15,7 @@ import Journal from "./pages/journal";
 import { Global, css } from "@emotion/react";
 import CharacterProvider from "./providers/character-context";
 import Robbery from "./pages/robbery";
+import Hospital from "./pages/hospital/";
 const GlobalStyles = css`
   /*
     This will hide the focus indicator if the element receives focus    via the mouse,
@@ -52,6 +53,15 @@ function App() {
                 element={
                   <PrivateRoute>
                     <Robbery />
+                  </PrivateRoute>
+                }
+              ></Route>
+              <Route
+                exact
+                path="/hospital"
+                element={
+                  <PrivateRoute>
+                    <Hospital />
                   </PrivateRoute>
                 }
               ></Route>

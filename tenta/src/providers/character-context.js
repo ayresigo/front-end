@@ -18,7 +18,7 @@ const CharacterProvider = ({ children }) => {
   const getCharacters = async (token) => {
     setCharacterState({ ...characterState, isLoaded: false });
     var characters = await (await _api.fetchCharacters(token)).data;
-
+    
     setCharacterState({
       ...characterState,
       characters: characters,
@@ -28,6 +28,7 @@ const CharacterProvider = ({ children }) => {
 
   const value = {
     characterState,
+    setCharacterState,
     getCharacters: useCallback((id) => {
       getCharacters(id);
     }, []),

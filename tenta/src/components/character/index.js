@@ -1,5 +1,5 @@
 import { Avatar, AvatarBadge, AvatarGroup } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import * as S from "./styled";
 import {
   Heading,
@@ -27,6 +27,7 @@ import { MdMale } from "react-icons/md";
 import { EditIcon } from "@chakra-ui/icons";
 
 function Character(props) {
+  const [isSelected, setIsSelected] = useState(false);
   const calculatePerc = (current, total) => {
     return (current / total) * 100;
   };
@@ -34,7 +35,7 @@ function Character(props) {
   return (
     <Popover>
       <PopoverTrigger>
-        <button>
+        <S.Button disabled={!props.isAvaliable}>
           <S.Character>
             <AvatarGroup max={2} spacing="-15">
               <Avatar src={props.avatar} className="avatar">
@@ -59,8 +60,35 @@ function Character(props) {
               size="xs"
               colorScheme="yellow"
             />
+            {props.robberyMenu ? (
+              props.isAvaliable ? (
+                isSelected ? (
+                  <Text fontSize="xs" color="green.500">
+                    [selected]
+                  </Text>
+                ) : null
+              ) : (
+                <>
+                  {props.havePower ? null : (
+                    <Text fontSize="xs" color="red.500" sx={"z-index: 1"}>
+                      [-power]
+                    </Text>
+                  )}
+                  {props.haveStamina ? null : (
+                    <Text fontSize="xs" color="red.500">
+                      [-stamina]
+                    </Text>
+                  )}
+                  {props.haveStatus ? null : (
+                    <Text fontSize="xs" color="red.500">
+                      [busy]
+                    </Text>
+                  )}
+                </>
+              )
+            ) : null}
           </S.Character>
-        </button>
+        </S.Button>
       </PopoverTrigger>
       <PopoverContent borderColor="black" bgColor="blue.900">
         <PopoverArrow />
@@ -185,7 +213,23 @@ function Character(props) {
           </S.PopoverBody>
         </PopoverBody>
         <PopoverFooter>
-          <Button>Select</Button>
+          {props.robberyMenu ? (
+            <Button
+              variant="ghost"
+              colorScheme="pink"
+              onClick={() => {
+                if (isSelected) {
+                  if (props.removeSelection(props.characterId))
+                    setIsSelected(false);
+                } else {
+                  if (props.addSelection(props.characterId))
+                    setIsSelected(true);
+                }
+              }}
+            >
+              {isSelected ? "Unselect" : "Select"}
+            </Button>
+          ) : null}
         </PopoverFooter>
       </PopoverContent>
     </Popover>

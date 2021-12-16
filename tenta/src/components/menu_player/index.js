@@ -8,6 +8,7 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/tabs";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { Divider } from "@chakra-ui/layout";
 import {
+  SlideFade,
   Tooltip,
   Icon,
   Heading,
@@ -17,13 +18,8 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  MenuItem,
   MenuItemOption,
-  MenuGroup,
   MenuOptionGroup,
-  MenuIcon,
-  MenuCommand,
-  MenuDivider,
   Spinner,
 } from "@chakra-ui/react";
 import {
@@ -36,7 +32,6 @@ import Character from "../character";
 import api from "../../services/api";
 import { EditIcon } from "@chakra-ui/icons";
 import { createStandaloneToast } from "@chakra-ui/toast";
-import { id } from "ethers/lib/utils";
 
 function PlayerMenu() {
   const [pagination, setPagination] = useState({
@@ -369,7 +364,6 @@ function PlayerMenu() {
               >
                 <MdOutlineKeyboardArrowLeft />
               </S.ArrowButtons>
-
               <Wrap justify="center">
                 {characterState.isLoaded ? (
                   characterState.characters
@@ -396,25 +390,28 @@ function PlayerMenu() {
                     .map((character, id) => {
                       return (
                         <WrapItem p="2">
-                          <Character
-                            item
-                            // showSellingOptions={true}
-                            affiliation={character.affiliation}
-                            avatar={character.avatar}
-                            gender={character.gender}
-                            health={character.health}
-                            currentHealth={character.currentHealth}
-                            characterId={character.id}
-                            job={character.job}
-                            name={character.name}
-                            owner={character.owner}
-                            power={character.power}
-                            rarity={character.rarity}
-                            stamina={character.stamina}
-                            currentStamina={character.currentStamina}
-                            status={character.status}
-                            creationDate={character.creationDate}
-                          />
+                          <SlideFade in={pageIsLoaded}>
+                            <Character
+                              item
+                              isAvaliable
+                              // showSellingOptions={true}
+                              affiliation={character.affiliation}
+                              avatar={character.avatar}
+                              gender={character.gender}
+                              health={character.health}
+                              currentHealth={character.currentHealth}
+                              characterId={character.id}
+                              job={character.job}
+                              name={character.name}
+                              owner={character.owner}
+                              power={character.power}
+                              rarity={character.rarity}
+                              stamina={character.stamina}
+                              currentStamina={character.currentStamina}
+                              status={character.status}
+                              creationDate={character.creationDate}
+                            />
+                          </SlideFade>
                         </WrapItem>
                       );
                     })
@@ -422,7 +419,6 @@ function PlayerMenu() {
                   <Spinner />
                 )}
               </Wrap>
-
               <S.ArrowButtons
                 disabled={pagination.lastPage}
                 onClick={() => {
@@ -464,6 +460,8 @@ function PlayerMenu() {
           toggleLoad();
         }}
         marginTop="15px"
+        colorScheme="pink"
+        variant="ghost"
       >
         Toggle Load
       </Button>

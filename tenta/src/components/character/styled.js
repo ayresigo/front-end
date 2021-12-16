@@ -2,6 +2,9 @@ import styled from "styled-components";
 
 export const Character = styled.div`
   /* width: 100%; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 export const MainDiv = styled.div`
   background-image: linear-gradient(
@@ -72,6 +75,16 @@ export const PopoverBody = styled.div`
 export const Badge = styled.div`
   text-align: center;
   margin-top: -2px;
+`;
+
+export const Button = styled.button`
+  :disabled {
+    display:flex
+    /* flex-direction: row; */
+    color: rgba(0, 0, 0, 1);
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 // export const HealthAndStamina = styled.div`
