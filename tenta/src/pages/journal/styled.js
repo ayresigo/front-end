@@ -23,16 +23,35 @@ export const JournalTitle = styled.div`
   font-size: 70px;
 `;
 
+export const JournalHeadingInfo = styled.div`
+  display: flex;
+`;
+
 export const JournalContent = styled.div`
-  padding: 16px;
+  width: 100%;
 `;
 
 export const FirstContentImageAndLabel = styled.div`
-  width: 400px;
+  width: 450px;
+`;
+
+export const FirstContent = styled.div`
+  /* width: 400px; */
+  margin-top: 16px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+`;
+
+export const FirstContentText = styled.div`
+  text-align: justify;
+  width: 280px;
+  height: 350px;
 `;
 
 export const FirstContentImage = styled.img`
-  border-radius: 15px;
+  /* border-radius: 15px; */
   object-fit: cover;
   height: 350px;
 `;
