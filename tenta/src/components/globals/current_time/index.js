@@ -16,7 +16,13 @@ const CurrentTime = () => {
       fetchTime();
       setAsync(false);
     }
-  }, [currentTime]);
+  }, []);
+
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     setCurrentTime(currentTime-1);
+  //   }, 1000);
+  // },[currentTime])
 
   return <div>{currentTime}</div>;
 };

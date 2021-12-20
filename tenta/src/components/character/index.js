@@ -1,5 +1,5 @@
 import { Avatar, AvatarBadge, AvatarGroup } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as S from "./styled";
 import {
   Heading,
@@ -25,12 +25,30 @@ import {
 } from "@chakra-ui/react";
 import { MdMale } from "react-icons/md";
 import { EditIcon } from "@chakra-ui/icons";
+import api from "../../services/api";
 
 function Character(props) {
   const [isSelected, setIsSelected] = useState(false);
+  const [timer, setTimer] = useState({
+    currentTime: 0,
+    singleton: true,
+    finished: false,
+  });
+  const [isBusy, setIsBusy] = useState(false);
+  const [async, setAsync] = useState(true);
+  const _api = new api();
+  // const currentTime = await (await _api.getUnixTime()).data;
+  var currentTime = 0;
+
   const calculatePerc = (current, total) => {
     return (current / total) * 100;
   };
+
+  useEffect(() => {
+    if (props.status.id === 2) {
+      setIsBusy(true);
+    }
+  }, [props.status.id]);
 
   return (
     <Popover>
@@ -41,7 +59,7 @@ function Character(props) {
               <Avatar src={props.avatar} className="avatar">
                 <AvatarBadge
                   borderColor="green.900"
-                  bg="green.500"
+                  bg={props.status.bgColor}
                   boxSize="1em"
                 />
               </Avatar>
@@ -104,6 +122,7 @@ function Character(props) {
                 </Badge>
               </S.Badge>
               <h4>{props.status.name}</h4>
+              {isBusy ? timer.currentTime : null}
             </S.PopoverAvatarAndStatus>
             <S.PopoverCharacterInfo>
               <S.PopoverName>

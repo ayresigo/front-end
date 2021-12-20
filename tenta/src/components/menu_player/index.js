@@ -56,6 +56,7 @@ function PlayerMenu() {
   );
   const bg = colors[tabIndex];
   const _api = new api();
+  var currentTime = 0;
 
   const toggleLoad = () => {
     if (pageIsLoaded) {
@@ -190,7 +191,6 @@ function PlayerMenu() {
   //     console.log("2");
   //   }
   // }, [pagination]);
-
   return (
     <S.MainDiv>
       {/* {pageIsLoaded ? <Avatar /> : <SkeletonCircle />} */}
@@ -395,6 +395,7 @@ function PlayerMenu() {
                               item
                               isAvaliable
                               // showSellingOptions={true}
+                              currentTime={currentTime}
                               affiliation={character.affiliation}
                               avatar={character.avatar}
                               gender={character.gender}

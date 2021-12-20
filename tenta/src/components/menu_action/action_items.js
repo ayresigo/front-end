@@ -12,8 +12,8 @@ export const MenuItems = [
       url: "/hospital",
     },
     {
-      title: "Lavagem de Dinheiro",
-      url: "#",
+      title: "Ambush",
+      url: "/ambush",
     },
     {
       title: "Boca de fumo",
