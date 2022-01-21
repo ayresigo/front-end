@@ -1,30 +1,26 @@
-import React, { createContext, useState, useCallback } from "react";
+import React, { createContext, useCallback, useEffect, useState } from "react";
 import api from "../services/api";
 
-export const TimeContext = createContext({
-  current_time: undefined,
-});
+export const TimeContext = createContext();
 
 const TimeProvider = ({ children }) => {
-  const [timeState, setTimeState] = useState({
-    current_time: undefined,
-  });
+  const [currentTime, setCurrentTime] = useState(Math.floor(Date.now() / 1000));
 
-  const _api = new api();
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCurrentTime(Math.floor(Date.now() / 1000));
+    }, 1000);
 
-  const getTime = async () => {
-    var _time = await (await _api.getTime()).data;
-    setTimeState({ current_time: _time });
-  };
+    return () => clearTimeout(timer);
+  }, [currentTime]);
 
   const value = {
-    timeState,
-    getTime: useCallback(() => {
-      getTime();
-    }, []),
+    currentTime,
   };
 
-  return <TimeContext.Provider value={value}>{children}</TimeContext.Provider>;
+  return (
+    <TimeContext.Provider value={value}> {children} </TimeContext.Provider>
+  );
 };
 
 export default TimeProvider;

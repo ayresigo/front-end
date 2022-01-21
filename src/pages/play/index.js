@@ -1,24 +1,28 @@
-import { Wrap, WrapItem } from "@chakra-ui/layout";
-import { Spacer } from "@chakra-ui/react";
+import { Spacer, Wrap, WrapItem } from "@chakra-ui/layout";
 import React from "react";
-import { Component } from "react";
-import MenuBar from "../../components/menu-bar";
-import PlayerPofile from "../../components/player-profile/index";
+import { Link } from "react-router-dom";
+import Canvas from "../../components/canvas";
+import ActionMenu from "../../components/menu_action";
+import PlayerMenu from "../../components/menu_player";
 
-const Play = ({ children }) => {
+function Play({ children }) {
   return (
-    <Wrap ml="8" mr="8">
-      <WrapItem>
-        <PlayerPofile />
-      </WrapItem>
-      <Spacer />
-      <WrapItem>{children}</WrapItem>
-      <Spacer />
-      <WrapItem>
-        <MenuBar />
-      </WrapItem>
-    </Wrap>
+    <div>
+      <Wrap>
+        <WrapItem>
+          <PlayerMenu />
+        </WrapItem>
+        <Spacer />
+        <WrapItem>
+          <Canvas>{children}</Canvas>
+        </WrapItem>
+        <Spacer />
+        <WrapItem>
+          <ActionMenu />
+        </WrapItem>
+      </Wrap>
+    </div>
   );
-};
+}
 
 export default Play;

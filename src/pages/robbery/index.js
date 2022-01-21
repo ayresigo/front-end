@@ -1,162 +1,145 @@
-import { Select } from "@chakra-ui/select";
-import React, { useEffect, useState } from "react";
-import Character from "../../components/character-status";
-import { RobberyMock } from "./mock";
-import { Center, Divider, Wrap, WrapItem } from "@chakra-ui/layout";
+import { Alert, AlertIcon } from "@chakra-ui/alert";
+import { Skeleton, Button, SkeletonText, Fade } from "@chakra-ui/react";
 import {
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from "@chakra-ui/modal";
-import * as S from "./styled";
-import RobberyItem from "../../components/robberyItem";
-import { Button } from "@chakra-ui/button";
-import { Input } from "@chakra-ui/input";
-import useCharacters from "../../hooks/character-hooks";
-import { CharacterStatus } from "../../components/character-status/character-status";
+  Divider,
+  Heading,
+  Link,
+  Text,
+  Wrap,
+  WrapItem,
+} from "@chakra-ui/layout";
+import { Spinner } from "@chakra-ui/spinner";
+import React, { useEffect, useState } from "react";
+import RobberyItem from "../../components/robbery_item";
 import api from "../../services/api";
-import { useDisclosure } from "@chakra-ui/hooks";
+import * as S from "./styled";
+import { ColorModeScript } from "@chakra-ui/react";
+import RobberyEvents from "../../components/robbery_event";
+import { FaVideoSlash } from "react-icons/fa";
 
-function Robbery() {
-  const { characterState, getCharacters } = useCharacters();
-  const [modal, setModal] = useState({});
-  const [robberies, setRobberies] = useState([]);
-  const [robberyInfo, setRobberyInfo] = useState({});
-  const [async, setAsync] = useState(true);
-  const [testTrigger, setTestTrigger] = useState(false);
+const Robbery = () => {
+  const [robberies, setRobberies] = useState(null);
+  const [myRobberies, setMyRobberies] = useState([
+    { name: "Velha", participants: 1, duration: 500, claimable: true },
+    {
+      name: "Radio de carro",
+      participants: 2,
+      duration: 3500,
+      claimable: false,
+    },
+    { name: "Velha", participants: 1, duration: 320, claimable: false },
+  ]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [modalIsOpened, setModalIsOpened] = useState(false);
   const _api = new api();
 
   useEffect(() => {
-    const _getRobberies = async () => {
-      var _robberies = await (await _api.getRobberies(1)).data;
-      setRobberies(_robberies);
-      setAsync(false);
+    const getRobberies = async () => {
+      var _robberies = await (await _api.getRobberies()).data;
+      setRobberies({ data: _robberies });
+      setIsLoaded(true);
     };
 
-    if (async) _getRobberies();
-  }, [robberies, async]);
+    getRobberies();
+  }, []);
 
-  const getDataFromChild = (val) => {
-    if (robberyInfo.participants) {
-      setRobberyInfo({
-        ...robberyInfo,
-        participants: [...robberyInfo.participants, { characterId: val }],
-      });
-    } else {
-      setRobberyInfo({
-        ...robberyInfo,
-        participants: [{ characterId: val }],
-      });
-    }
-  };
-
-  const startRobbery = async () => {
-    const token = await localStorage.getItem("token");
-    setRobberyInfo({ ...robberyInfo, token });
-    setTestTrigger(true);
-  };
-
-  useEffect(() => {
-    if (testTrigger) {
-      console.log(robberyInfo);
-      _api.startRobery(robberyInfo, true);
-    }
-  }, [testTrigger]);
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <S.MainWrapper>
-      Robbery
-      <Wrap justify="center">
-        {robberies.map((robbery, id) => {
-          return (
-            <WrapItem p="1">
-              <button
-                onClick={() => {
-                  setModal({ robbery });
-                  setRobberyInfo({ ...robberyInfo, robberyId: robbery.id });
-                  onOpen();                  
-                }}
-              >
-                <RobberyItem item={robbery} />
-              </button>
-            </WrapItem>
-          );
-        })}
-      </Wrap>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Escolher personagem</ModalHeader>
-          <ModalCloseButton />
-          {/* <ModalCloseButton
-            onClick={(e) => setModal({ ...modal, isOpen: false })}
-          /> */}
-          {modal.robbery ? (
-            <ModalBody>
-              <div>Nome: {modal.robbery.name}</div>
-              <div>Descrição: {modal.robbery.description}</div>
-              <div>Dificuldade: {modal.robbery.difficulty}</div>
-              <div>Poder necessário: {modal.robbery.powerNeeded}</div>
-              <div>Premiação: {modal.robbery.reward}</div>
-              <div>Stamina necessária: {modal.robbery.stamina}</div>
-              <div>
-                Participantes: {modal.robbery.minPart} min. ~{" "}
-                {modal.robbery.maxPart} max.
-              </div>
-              <br />
-              Selecione o(s) participante(s):
-            </ModalBody>
-          ) : null}
-          <Wrap justify="center">
-            {characterState.characters.map((character) => {
-              if (character.status.id === 1) {
-                return (
-                  <WrapItem p="2">
-                    <Character
-                      sendData={getDataFromChild}
-                      selectable={true}
-                      alignment={character.alignment}
-                      avatar={character.avatar}
-                      genter={character.gender}
-                      health={character.health}
-                      characterId={character.id}
-                      job={character.job}
-                      moneyRatio={character.moneyRatio}
-                      name={character.name}
-                      owner={character.owner}
-                      power={character.power}
-                      rarity={character.rarity}
-                      stamina={character.stamina}
-                      status={character.status}
-                    />
-                  </WrapItem>
-                );
-              } else {
-                return null;
-              }
-            })}
-          </Wrap>
-          <ModalFooter>
-            <Button
-              variant="ghost"
-              type="submit"
-              onClick={() => {
-                onClose();
-                startRobbery();
-              }}
+    <>
+      <S.MainDiv>
+        <Skeleton
+          isLoaded={isLoaded}
+          w="fit-content"
+          mt="8px"
+          ml="40px"
+          borderRadius="15px"
+        >
+          <Heading size="3xl" width="fit-content">
+            Robbery
+          </Heading>
+        </Skeleton>
+        <S.RobberyContent>
+          <Skeleton isLoaded={isLoaded} h="250px" w="250px" borderRadius="15px">
+            <S.Banner src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/bb2d4621334149.562ff6d3a8353.jpg" />
+          </Skeleton>
+          <S.RobberyText>
+            <SkeletonText
+              isLoaded={isLoaded}
+              w="750px"
+              noOfLines={5}
+              spacing={4}
             >
-              Confirmar
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </S.MainWrapper>
+              <Text>
+                O crime perfeito é aquele que não deixa vestígios...Seja rápido
+                na ação e preciso nos detalhes e talvez você consiga escapar com
+                uma boa grana. Às vezes tu sozinho não dá conta do recado, e é
+                aí que entra a sua gangue: com a ajuda de seus comparsas você
+                poderá executar roubos mais quentes. Você irá descobrir mais
+                roubos e dificuldades após a conclusão de novos níveis!
+              </Text>
+            </SkeletonText>
+            {isLoaded ? (
+              <Alert
+                w="inherit"
+                status="warning"
+                variant="top-accent"
+                bg="rgba(251, 211, 141, 0.3)"
+              >
+                <AlertIcon />
+                Verifique todas as informações de roubo para não ser pego de
+                surpresa.
+              </Alert>
+            ) : null}
+          </S.RobberyText>
+        </S.RobberyContent>
+        <Divider />
+        Your robberies:
+        <RobberyEvents myRobberies={myRobberies} />
+        <Divider mt="2" />
+        Selecione um roubo:
+        <Wrap justify="center">
+          {isLoaded ? (
+            robberies.data.map((robbery, id) => {
+              return (
+                <WrapItem p="2">
+                  <Fade in={isLoaded}>
+                    <RobberyItem
+                      id={robbery.id}
+                      name={robbery.name}
+                      description={robbery.description}
+                      reward={robbery.reward}
+                      duration={robbery.duration}
+                      stamina={robbery.stamina}
+                      power={robbery.power}
+                      minParticipants={robbery.minParticipants}
+                      maxParticipants={robbery.maxParticipants}
+                      ambushRisk={robbery.ambushRisk}
+                      prisonRisk={robbery.prisonRisk}
+                      deathRisk={robbery.deathRisk}
+                      background={robbery.background}
+                    />
+                  </Fade>
+                </WrapItem>
+              );
+            })
+          ) : (
+            <WrapItem>
+              <Spinner size="xl" />
+            </WrapItem>
+          )}
+          <Button
+            colorScheme="pink"
+            variant="ghost"
+            onClick={() => {
+              if (isLoaded) setIsLoaded(false);
+              else setIsLoaded(true);
+            }}
+          >
+            {isLoaded ? "Unload" : "Load"}
+          </Button>
+        </Wrap>
+      </S.MainDiv>
+    </>
   );
-}
+};
 
 export default Robbery;

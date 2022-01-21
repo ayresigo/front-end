@@ -1,14 +1,17 @@
 import React from "react";
 import CurrentTime from "../current_time";
 import Metamask from "./metamask_login";
+import useTime from "../../../hooks/time-hook";
+import * as S from "./styled";
 
 const NavBar = () => {
+  const { currentTime, fetchTime } = useTime();
   return (
-    <div>
-      Cryminals
+    <S.MainDiv>
+      <S.CryminalsTitle>Cryminals</S.CryminalsTitle>
       <CurrentTime />
-      <Metamask /> 
-    </div>
+      <Metamask />
+    </S.MainDiv>
   );
 };
 

@@ -4,24 +4,16 @@ export const MenuItems = [
       url: "/play",
     },
     {
-      title: "Recruit",
-      url: "/recruit",
-    },
-    {
       title: "Roubos",
       url: "/robbery",
     },
     {
-      title: "Emboscada",
-      url: "/ambush",
-    },
-    {
       title: "Hospital",
-      url: "#",
+      url: "/hospital",
     },
     {
-      title: "Lavagem de Dinheiro",
-      url: "#",
+      title: "Ambush",
+      url: "/ambush",
     },
     {
       title: "Boca de fumo",

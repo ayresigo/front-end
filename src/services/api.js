@@ -1,14 +1,17 @@
 import axios from "axios";
 
 class api {
-  state = {};
+  //singleton
+  constructor() {
+    if (api.instance) return api.instance;
+    api.instance = this;
+    this.baseURL = "https://localhost:44377/api/v1";
+    return api.instance;
+  }
 
-  baseURL = "https://localhost:44335/api/v1";
-
-  // ACCOUNT
-  getAccount = async (address, log = false) => {
+  getUnixTime = async (log = false) => {
     var res = await axios({
-      url: `${this.baseURL}/Account/getAccount?address=${address}`,
+      url: `${this.baseURL}/utils/time/getUnixTime`,
       method: "get",
       headers: {
         "Content-Type": "application/json",
@@ -16,48 +19,6 @@ class api {
     });
 
     if (log) {
-      console.log(address);
-      console.log(res);
-    }
-
-    return res;
-  };
-
-  editUsername = async (address, username, log = false) => {
-    const base64Username = Buffer.from(username).toString("base64");
-    var res = await axios({
-      url: `${this.baseURL}/Account/editUsername?address=${address}&username=${base64Username}`,
-      method: "patch",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (log) {
-      console.log(address + " " + username);
-      console.log(res);
-    }
-
-    return res;
-  };
-
-  // AUTH
-  checkSignature = async (sign, log = false) => {
-    var res = await axios({
-      url: `${this.baseURL}/Auth/checkSignature`,
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: {
-        address: sign.address,
-        message: sign.message,
-        signature: sign.signature,
-      },
-    });
-
-    if (log) {
-      console.log(sign);
       console.log(res);
     }
 
@@ -66,50 +27,28 @@ class api {
 
   generateToken = async (data, log = false) => {
     var res = await axios({
-      url: `${this.baseURL}/Auth/generateToken`,
+      url: `${this.baseURL}/auth/generateToken`,
       method: "post",
       headers: {
         "Content-Type": "application/json",
       },
       data: {
-        id: data.id,
         address: data.address,
-        signature: {
-          message: data.message,
-          signature: data.signature,
-        },
+        message: data.message,
+        signature: data.signature,
       },
     });
 
     if (log) {
-      console.log(data);
       console.log(res);
     }
 
     return res;
   };
 
-  checkToken = async (token, log = false) => {
+  getTokenData = async (token, log = false) => {
     var res = await axios({
-      url: `${this.baseURL}/Auth/checkToken?token=${token}`,
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (log) {
-      console.log(token);
-      console.log(res);
-    }
-
-    return res;
-  };
-
-  // CHARACTER
-  createCharacter = async (log = false) => {
-    var res = await axios({
-      url: `${this.baseURL}/CharacterMock/createCharacter`,
+      url: `${this.baseURL}/auth/retrieveTokenData?token=${token}`,
       method: "get",
       headers: {
         "Content-Type": "application/json",
@@ -123,133 +62,113 @@ class api {
     return res;
   };
 
-  addCharacter = async (character, address, log = false) => {
+  fetchAccount = async (token, log = false) => {
     var res = await axios({
-      url: `${this.baseURL}/CharacterMock/addCharacter?address=${address}`,
+      url: `${this.baseURL}/accounts/fetchAccount?token=${token}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  getCharacterQtd = async (address, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/characters/getCharacterQtd?address=${address}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  fetchCharacters = async (token, page = 1, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/accounts/fetchCharacters?token=${token}&page=${page}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  getAccount = async (address, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/accounts/getAccount?address=${address}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  getRobberies = async (status = 1, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/robberies/getRobberies?status=${status}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  getRobberies = async (status = 1, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/robberies/getRobberies?status=${status}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  startRobbery = async (data, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/robberies/startRobbery`,
       method: "post",
       headers: {
         "Content-Type": "application/json",
       },
       data: {
-        owner: address,
-        name: character.name,
-        gender: character.gender,
-        avatar: character.avatar,
-        rarity: character.rarity,
-        power: character.power,
-        moneyRatio: character.moneyRatio,
-        health: character.health,
-        stamina: character.stamina,
-        job: character.job,
-        alignment: character.alignment,
-      },
-    });
-
-    if (log) {
-      console.log(character);
-      console.log(address);
-      console.log(res);
-    }
-
-    return res;
-  };
-
-  getCharacter = async (id, log = false) => {
-    var res = await axios({
-      url: `${this.baseURL}/CharacterMock/getCharacter?characterId=${id}`,
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (log) {
-      console.log(id);
-      console.log(res);
-    }
-
-    return res;
-  };
-
-  getCharacters = async (id, log = false) => {
-    var res = await axios({
-      url: `${this.baseURL}/CharacterMock/getCharacters?accountId=${id}`,
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (log) {
-      console.log(id);
-      console.log(res);
-    }
-
-    return res;
-  };
-
-  fetchCharacters = async (id, log = false) => {
-    var res = await axios({
-      url: `${this.baseURL}/CharacterMock/fetchCharacters?accountId=${id}`,
-      method: "patch",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (log) {
-      console.log(id);
-      console.log(res);
-    }
-
-    return res;
-  };
-
-  // ROBBERIES
-  getRobberies = async (status, log = false) => {
-    var res = await axios({
-      url: `${this.baseURL}/Robbery/getRobberies?status=${status}`,
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (log) {
-      console.log(status);
-      console.log(res);
-    }
-
-    return res;
-  };
-
-  startRobery = async (data, log = true) => {
-    var res = await axios({
-      url: `${this.baseURL}/Robbery/startRobbery`,
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: {
-        robberyId: data.robberyId,
         token: data.token,
         participants: data.participants,
-      },
-    });
-
-    if (log) {
-      console.log(data);
-      console.log(res);
-    }
-  };
-
-  // UTILS
-  getTime = async (log = false) => {
-    var res = await axios({
-      url: `${this.baseURL}/Utils/getTime`,
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
+        robberyId: data.robberyId,
       },
     });
 
@@ -259,6 +178,27 @@ class api {
 
     return res;
   };
+
+  // validateSignature = async (data, log = false) => {
+  //   var res = await axios({
+  //     url: `${this.baseURL}/auth/validateSignature`,
+  //     method: "post",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     data: {
+  //       address: data.address,
+  //       message: data.message,
+  //       signature: data.signature,
+  //     }
+  //   });
+
+  //   if (log) {
+  //     console.log(res);
+  //   }
+
+  //   return res;
+  // };
 }
 
 export default api;

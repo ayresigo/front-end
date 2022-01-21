@@ -90,6 +90,7 @@ const Metamask = () => {
       ...buttonProps,
       isLoading: true,
       loadingText: "Conectando...",
+      disabled: true,
     });
 
     try {
@@ -122,12 +123,18 @@ const Metamask = () => {
         description: err.message,
         status: "error",
       });
-      setButtonProps({ ...buttonProps, isLoading: false });
+      setButtonProps({ ...buttonProps, isLoading: false, disabled: false });
     }
   };
 
   return (
     <Button
+      _hover={{ bg: "#25416D" }}
+      _active={{
+        bg: "#dddfe2",
+        transform: "scale(0.98)",
+        borderColor: "#bec3c9",
+      }}
       variant="ghost"
       loadingText={buttonProps.loadingText}
       isLoading={buttonProps.isLoading}
