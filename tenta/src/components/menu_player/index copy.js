@@ -34,14 +34,14 @@ import { EditIcon } from "@chakra-ui/icons";
 import { createStandaloneToast } from "@chakra-ui/toast";
 
 function PlayerMenu() {
-  // const [pagination, setPagination] = useState({
-  //   offset: 0,
-  //   itemsPerPage: 9,
-  //   totalItems: 0,
-  //   firstPage: true,
-  //   lastPage: true,
-  //   click: true,
-  // });
+  const [pagination, setPagination] = useState({
+    offset: 0,
+    itemsPerPage: 9,
+    totalItems: 0,
+    firstPage: true,
+    lastPage: true,
+    click: true,
+  });
   const [pageIsLoaded, setPageIsLoaded] = useState(true);
   const [charactersIsLoaded, setCharactersIsLoaded] = useState(true);
   const { characterState, getCharacters } = useCharacters();
@@ -113,7 +113,7 @@ function PlayerMenu() {
         var characterQtd = await (
           await _api.getCharacterQtd(account.address)
         ).data;
-        // setPagination({ ...pagination, totalItems: characterQtd });
+        setPagination({ ...pagination, totalItems: characterQtd });
       } catch (err) {
         toast({
           position: "bottom",
@@ -136,48 +136,48 @@ function PlayerMenu() {
   //   setPagination({ ...pagination, click: true, totalItems: length });
   // }, [characterState]);
 
-  // useEffect(() => {
-  //   if (pagination.click) {
-  //     if (pagination.totalItems < pagination.itemsPerPage) {
-  //       setPagination({
-  //         ...pagination,
-  //         click: false,
-  //         lastPage: true,
-  //         firstPage: true,
-  //       });
-  //     } else if (
-  //       pagination.offset >= pagination.itemsPerPage &&
-  //       pagination.offset < pagination.totalItems - pagination.itemsPerPage
-  //     ) {
-  //       setPagination({
-  //         ...pagination,
-  //         click: false,
-  //         lastPage: false,
-  //         firstPage: false,
-  //       });
-  //     } else if (
-  //       pagination.offset < pagination.itemsPerPage &&
-  //       pagination.totalItems > pagination.itemsPerPage
-  //     ) {
-  //       setPagination({
-  //         ...pagination,
-  //         click: false,
-  //         lastPage: false,
-  //         firstPage: true,
-  //       });
-  //     } else if (
-  //       pagination.totalItems - pagination.itemsPerPage < pagination.offset &&
-  //       pagination.offset > 0
-  //     ) {
-  //       setPagination({
-  //         ...pagination,
-  //         click: false,
-  //         lastPage: true,
-  //         firstPage: false,
-  //       });
-  //     }
-  //   }
-  // }, [pagination]);
+  useEffect(() => {
+    if (pagination.click) {
+      if (pagination.totalItems < pagination.itemsPerPage) {
+        setPagination({
+          ...pagination,
+          click: false,
+          lastPage: true,
+          firstPage: true,
+        });
+      } else if (
+        pagination.offset >= pagination.itemsPerPage &&
+        pagination.offset < pagination.totalItems - pagination.itemsPerPage
+      ) {
+        setPagination({
+          ...pagination,
+          click: false,
+          lastPage: false,
+          firstPage: false,
+        });
+      } else if (
+        pagination.offset < pagination.itemsPerPage &&
+        pagination.totalItems > pagination.itemsPerPage
+      ) {
+        setPagination({
+          ...pagination,
+          click: false,
+          lastPage: false,
+          firstPage: true,
+        });
+      } else if (
+        pagination.totalItems - pagination.itemsPerPage < pagination.offset &&
+        pagination.offset > 0
+      ) {
+        setPagination({
+          ...pagination,
+          click: false,
+          lastPage: true,
+          firstPage: false,
+        });
+      }
+    }
+  }, [pagination]);
 
   return (
     <S.MainDiv>
@@ -338,9 +338,16 @@ function PlayerMenu() {
             </Tooltip>
             <S.PanelContent>
               <S.ArrowButtons
-                
+                disabled={pagination.firstPage}
                 onClick={() => {
-                  console.log("oi vidah");
+                  if (pagination.offset > 0) {
+                    var newOffset = pagination.offset - pagination.itemsPerPage;
+                    setPagination({
+                      ...pagination,
+                      offset: newOffset,
+                      click: true,
+                    });
+                  }
                 }}
               >
                 <MdOutlineKeyboardArrowLeft />
@@ -364,10 +371,10 @@ function PlayerMenu() {
                           return a.id - b.id;
                       }
                     })
-                    // .slice(
-                    //   pagination.offset,
-                    //   pagination.offset + pagination.itemsPerPage
-                    // )
+                    .slice(
+                      pagination.offset,
+                      pagination.offset + pagination.itemsPerPage
+                    )
                     .map((character, id) => {
                       return (
                         <WrapItem p="2">
@@ -402,15 +409,40 @@ function PlayerMenu() {
                 )}
               </Wrap>
               <S.ArrowButtons
+                disabled={pagination.lastPage}
                 onClick={() => {
-                  console.log("tchau vidah");
-                  getCharacters(localStorage.getItem("token"), 2);
+                  if (
+                    pagination.offset <
+                    pagination.totalItems - pagination.itemsPerPage
+                  ) {
+                    var newOffset = pagination.offset + pagination.itemsPerPage;
+                    getCharacters(
+                      localStorage.getItem("token"),
+                      newOffset / pagination.itemsPerPage
+                    );
+                    console.log(newOffset / pagination.itemsPerPage);
+                    setPagination({
+                      ...pagination,
+                      click: true,
+                      offset: newOffset,
+                    });
+                  }
                 }}
               >
                 <MdOutlineKeyboardArrowRight />
               </S.ArrowButtons>
             </S.PanelContent>
-            Number of characters
+            {pagination.lastPage ? (
+              <>
+                {pagination.totalItems} of {pagination.totalItems}
+              </>
+            ) : (
+              <>
+                {pagination.offset + pagination.itemsPerPage}
+                {" of "}
+                {pagination.totalItems}
+              </>
+            )}
           </TabPanel>
           <TabPanel p="2">
             <p>My Enterprises!</p>

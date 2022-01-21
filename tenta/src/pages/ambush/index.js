@@ -26,7 +26,6 @@ import RobberyItem from "../../components/robbery_item";
 import api from "../../services/api";
 import * as S from "./styled";
 import { ColorModeScript } from "@chakra-ui/react";
-import AmbushItem from "../../components/ambush_item";
 
 const Ambush = () => {
   const [robberies, setRobberies] = useState(null);
@@ -81,38 +80,32 @@ const Ambush = () => {
           </S.RobberyText>
         </S.RobberyContent>
         <Divider />
-
-        <AmbushItem ambush="oi" />
         <Table size="sm">
           <Thead>
             <Tr>
-              <Th>To convert</Th>
-              <Th>into</Th>
-              <Th isNumeric>multiply by</Th>
+              <Th>Account</Th>
+              <Th>Robbery</Th>
+              <Th>Participants</Th>
+              <Th>Time Left</Th>
+              <Th>Difficulty</Th>
             </Tr>
           </Thead>
           <Tbody>
             <Tr>
-              <Td>inches</Td>
-              <Td>millimetres (mm)</Td>
-              <Td isNumeric>25.4</Td>
-            </Tr>
-            <Tr>
-              <Td>feet</Td>
-              <Td>centimetres (cm)</Td>
-              <Td isNumeric>30.48</Td>
-            </Tr>
-            <Tr>
-              <Td>yards</Td>
-              <Td>metres (m)</Td>
-              <Td isNumeric>0.91444</Td>
+              <Td>1234</Td>
+              <Td>Velha</Td>
+              <Td>1, 2, 3</Td>
+              <Td>0:15</Td>
+              <Td>☆ ☆ ☆ ☆ ★</Td>
             </Tr>
           </Tbody>
           <Tfoot>
             <Tr>
-              <Th>To convert</Th>
-              <Th>into</Th>
-              <Th isNumeric>multiply by</Th>
+              <Th>Account</Th>
+              <Th>Robbery</Th>
+              <Th>Participants</Th>
+              <Th>Time Left</Th>
+              <Th>Difficulty</Th>
             </Tr>
           </Tfoot>
         </Table>

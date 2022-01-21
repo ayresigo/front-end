@@ -20,15 +20,19 @@ import {
   Progress,
   CircularProgressLabel,
   PopoverArrow,
+  useDisclosure,
   PopoverCloseButton,
   Tooltip,
 } from "@chakra-ui/react";
+import useTime from "../../hooks/time-hook";
 import { MdMale } from "react-icons/md";
 import { EditIcon } from "@chakra-ui/icons";
 import api from "../../services/api";
 
 function Character(props) {
   const [isSelected, setIsSelected] = useState(false);
+  const { onOpen, onClose, isOpen } = useDisclosure();
+  const { currentTime } = useTime();
   const [timer, setTimer] = useState({
     currentTime: 0,
     singleton: true,
@@ -38,7 +42,6 @@ function Character(props) {
   const [async, setAsync] = useState(true);
   const _api = new api();
   // const currentTime = await (await _api.getUnixTime()).data;
-  var currentTime = 0;
 
   const calculatePerc = (current, total) => {
     return (current / total) * 100;
@@ -51,7 +54,7 @@ function Character(props) {
   }, [props.status.id]);
 
   return (
-    <Popover>
+    <Popover onOpen={onOpen} onClose={onClose} isOpen={isOpen}>
       <PopoverTrigger>
         <S.Button disabled={!props.isAvaliable}>
           <S.Character>
@@ -122,7 +125,25 @@ function Character(props) {
                 </Badge>
               </S.Badge>
               <h4>{props.status.name}</h4>
-              {isBusy ? timer.currentTime : null}
+              {/* {isBusy
+                ? props.status.statusChanged +
+                  props.status.statusDuration -
+                  currentTime
+                : null} */}
+              {isBusy ? (
+                props.status.statusChanged +
+                  props.status.statusDuration -
+                  currentTime >=
+                0 ? (
+                  <>
+                    {props.status.statusChanged +
+                      props.status.statusDuration -
+                      currentTime}
+                  </>
+                ) : (
+                  "refresh to update"
+                )
+              ) : null}
             </S.PopoverAvatarAndStatus>
             <S.PopoverCharacterInfo>
               <S.PopoverName>
@@ -244,6 +265,7 @@ function Character(props) {
                   if (props.addSelection(props.characterId))
                     setIsSelected(true);
                 }
+                onClose();
               }}
             >
               {isSelected ? "Unselect" : "Select"}

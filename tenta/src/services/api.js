@@ -78,9 +78,25 @@ class api {
     return res;
   };
 
-  fetchCharacters = async (token, log = false) => {
+  getCharacterQtd = async (address, log = false) => {
     var res = await axios({
-      url: `${this.baseURL}/accounts/fetchCharacters?token=${token}`,
+      url: `${this.baseURL}/characters/getCharacterQtd?address=${address}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  fetchCharacters = async (token, page = 1, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/accounts/fetchCharacters?token=${token}&page=${page}`,
       method: "get",
       headers: {
         "Content-Type": "application/json",
@@ -125,13 +141,34 @@ class api {
 
     return res;
   };
-  
+
   getRobberies = async (status = 1, log = false) => {
     var res = await axios({
       url: `${this.baseURL}/robberies/getRobberies?status=${status}`,
       method: "get",
       headers: {
         "Content-Type": "application/json",
+      },
+    });
+
+    if (log) {
+      console.log(res);
+    }
+
+    return res;
+  };
+
+  startRobbery = async (data, log = false) => {
+    var res = await axios({
+      url: `${this.baseURL}/robberies/startRobbery`,
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        token: data.token,
+        participants: data.participants,
+        robberyId: data.robberyId,
       },
     });
 

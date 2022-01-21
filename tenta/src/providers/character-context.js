@@ -1,36 +1,38 @@
 import React, { createContext, useCallback, useState } from "react";
 import api from "../services/api";
 
-export const CharacterContext = createContext({
-  loading: false,
-  characters: [],
-});
+export const CharacterContext = createContext({});
 
 const CharacterProvider = ({ children }) => {
   const [characterState, setCharacterState] = useState({
-    hasCharacter: false,
     isLoaded: false,
     characters: [],
   });
 
   const _api = new api();
 
-  const getCharacters = async (token) => {
+  const getCharacters = async (token, page = 1) => {
     setCharacterState({ ...characterState, isLoaded: false });
-    var characters = await (await _api.fetchCharacters(token)).data;
-    
-    setCharacterState({
-      ...characterState,
-      characters: characters,
-      isLoaded: true,
-    });
+    var _characters = await (await _api.fetchCharacters(token, page)).data;
+    if (page === 1)
+      setCharacterState({
+        ...characterState,
+        characters: _characters,
+        isLoaded: true,
+      });
+    else
+      setCharacterState({
+        ...characterState,
+        characters: _characters,
+        isLoaded: true,
+      });
   };
 
   const value = {
     characterState,
     setCharacterState,
-    getCharacters: useCallback((id) => {
-      getCharacters(id);
+    getCharacters: useCallback((token, page) => {
+      getCharacters(token, page);
     }, []),
   };
 

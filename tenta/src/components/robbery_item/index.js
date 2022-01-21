@@ -12,6 +12,8 @@ import {
   ModalCloseButton,
   useDisclosure,
   Spinner,
+  Divider,
+  Avatar,
 } from "@chakra-ui/react";
 import { createStandaloneToast } from "@chakra-ui/toast";
 import { Tooltip } from "@chakra-ui/tooltip";
@@ -27,13 +29,15 @@ import { GiHandcuffs, GiPistolGun, GiSurprised } from "react-icons/gi";
 import { FaSkullCrossbones } from "react-icons/fa";
 import * as S from "./styled";
 import Character from "../character";
+import api from "../../services/api";
 
 const RobberyItem = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { characterState, setCharacterState } = useCharacters();
+  const { characterState, getCharacters } = useCharacters();
   const [isLocked, setIsLocked] = useState(true);
   const [selection, setSelection] = useState({ ids: [] });
   const toast = createStandaloneToast();
+  const _api = new api();
 
   const addSelection = (id) => {
     try {
@@ -76,11 +80,7 @@ const RobberyItem = (props) => {
       return false;
     }
   };
-
-  useEffect(() => {
-    console.log(selection);
-  }, [selection]);
-
+  
   return (
     <>
       <S.AuxDiv>
@@ -174,6 +174,7 @@ const RobberyItem = (props) => {
           setSelection({ ids: [] });
         }}
         isCentered
+        size="xl"
       >
         <ModalOverlay bgColor="rgba(0,0,0,0.5 )" />
         <ModalContent bgColor="rgba(0,0,0,0)">
@@ -186,16 +187,52 @@ const RobberyItem = (props) => {
               }}
             />
             <ModalBody>
-              <Wrap>
+              <S.SelectedCharactersMainDiv>
+                <Wrap justify="center">
+                  <WrapItem>
+                    <Avatar />
+                  </WrapItem>
+                  <WrapItem>
+                    <Avatar />
+                  </WrapItem>
+                  <WrapItem>
+                    <Avatar />
+                  </WrapItem>
+                  <WrapItem>
+                    <Avatar />
+                  </WrapItem>
+                  <WrapItem>
+                    <Avatar />
+                  </WrapItem>
+                </Wrap>
+                <S.SelectedCharactersRobberyInfo>
+                  <S.SelectedCharactersIndividualRobberyInfo>
+                    <div>Power</div>
+                    <div>500</div>
+                  </S.SelectedCharactersIndividualRobberyInfo>
+                  <S.SelectedCharactersIndividualRobberyInfo>
+                    <div>Difficulty</div>
+                    <S.SelectedCharactersIndividualValueRobberyInfo>
+                      <S.SelectedCharactersIndividualModifierRobberyInfo>
+                        ^3%
+                      </S.SelectedCharactersIndividualModifierRobberyInfo>
+                      <div>500</div>
+                    </S.SelectedCharactersIndividualValueRobberyInfo>
+                  </S.SelectedCharactersIndividualRobberyInfo>
+                </S.SelectedCharactersRobberyInfo>
+              </S.SelectedCharactersMainDiv>
+
+              <Divider mt="2" mb="2" />
+              <Wrap justify="center">
                 {characterState.isLoaded ? (
                   characterState.characters
-                    .sort((a, b) => {
-                      return a.isAvaliable === b.isAvaliable
-                        ? 0
-                        : a.isAvaliable
-                        ? -1
-                        : 1;
-                    })
+                    // .sort((a, b) => {
+                    //   return a.isAvaliable === b.isAvaliable
+                    //     ? 0
+                    //     : a.isAvaliable
+                    //     ? -1
+                    //     : 1;
+                    // })
                     .map((character, id) => {
                       var havePower = true;
                       var isAvaliable = true;
@@ -212,7 +249,7 @@ const RobberyItem = (props) => {
                         haveStatus = false;
                         isAvaliable = false;
                       }
-                      if (character.stamina < props.stamina) {
+                      if (character.currentStamina < props.stamina) {
                         haveStamina = false;
                         isAvaliable = false;
                       }
@@ -265,7 +302,36 @@ const RobberyItem = (props) => {
                 Cancel
               </Button>
               {characterState.isLoaded ? (
-                <Button variant="ghost" colorScheme="pink">
+                <Button
+                  variant="ghost"
+                  colorScheme="pink"
+                  onClick={async () => {
+                    var data = {
+                      token: localStorage.getItem("token"),
+                      participants: selection.ids,
+                      robberyId: props.id,
+                    };
+                    console.log(data);
+                    onClose();
+                    setSelection({ ids: [] });
+                    try {
+                      await _api.startRobbery(data);
+                      getCharacters(localStorage.getItem("token"));
+                      toast({
+                        position: "bottom",
+                        description:
+                          "Robbery successfully started at ${current_time}",
+                        status: "success",
+                      });
+                    } catch (err) {
+                      toast({
+                        position: "bottom",
+                        description: err.message,
+                        status: "error",
+                      });
+                    }
+                  }}
+                >
                   Start
                 </Button>
               ) : null}

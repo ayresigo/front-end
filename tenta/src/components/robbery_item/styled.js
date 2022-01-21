@@ -123,11 +123,42 @@ export const Button = styled.button`
 export const ModalMainDiv = styled.div`
   display: flex;
   flex-direction: column;
+  background-color: black;
   color: white;
-  background: linear-gradient(
+  /* background: linear-gradient(
     0deg,
     rgba(0, 0, 0, 1) 35%,
     rgba(0, 0, 0, 0.65) 65%,
     rgba(0, 0, 0, 0) 100%
-  );
+  ); */
+`;
+
+export const SelectedCharactersMainDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+`;
+
+export const SelectedCharactersRobberyInfo = styled.div`
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+`;
+
+export const SelectedCharactersIndividualRobberyInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const SelectedCharactersIndividualLabelRobberyInfo = styled.div``;
+
+export const SelectedCharactersIndividualValueRobberyInfo = styled.div`
+  display: flex;
+`;
+
+export const SelectedCharactersIndividualModifierRobberyInfo = styled.div`
+  color: green;
 `;

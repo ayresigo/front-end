@@ -14,9 +14,21 @@ import RobberyItem from "../../components/robbery_item";
 import api from "../../services/api";
 import * as S from "./styled";
 import { ColorModeScript } from "@chakra-ui/react";
+import RobberyEvents from "../../components/robbery_event";
+import { FaVideoSlash } from "react-icons/fa";
 
 const Robbery = () => {
   const [robberies, setRobberies] = useState(null);
+  const [myRobberies, setMyRobberies] = useState([
+    { name: "Velha", participants: 1, duration: 500, claimable: true },
+    {
+      name: "Radio de carro",
+      participants: 2,
+      duration: 3500,
+      claimable: false,
+    },
+    { name: "Velha", participants: 1, duration: 320, claimable: false },
+  ]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [modalIsOpened, setModalIsOpened] = useState(false);
   const _api = new api();
@@ -80,6 +92,9 @@ const Robbery = () => {
           </S.RobberyText>
         </S.RobberyContent>
         <Divider />
+        Your robberies:
+        <RobberyEvents myRobberies={myRobberies} />
+        <Divider mt="2" />
         Selecione um roubo:
         <Wrap justify="center">
           {isLoaded ? (

@@ -14,6 +14,7 @@ import Journal from "./pages/journal";
 
 import { Global, css } from "@emotion/react";
 import CharacterProvider from "./providers/character-context";
+import TimeProvider from "./providers/time-context";
 import Robbery from "./pages/robbery";
 import Hospital from "./pages/hospital/";
 import Ambush from "./pages/ambush";
@@ -32,58 +33,60 @@ function App() {
   return (
     <S.MainDiv>
       <ChakraProvider>
-        <CharacterProvider>
-          <Global styles={GlobalStyles} />
-          <ResetCSS />
-          <NavBar />
-          <BrowserRouter>
-            <Routes>
-              {/* Private */}
-              <Route
-                exact
-                path="/play"
-                element={
-                  <PrivateRoute>
-                    <Journal />
-                  </PrivateRoute>
-                }
-              ></Route>
-              <Route
-                exact
-                path="/robbery"
-                element={
-                  <PrivateRoute>
-                    <Robbery />
-                  </PrivateRoute>
-                }
-              ></Route>
-              <Route
-                exact
-                path="/hospital"
-                element={
-                  <PrivateRoute>
-                    <Hospital />
-                  </PrivateRoute>
-                }
-              ></Route>
-              <Route
-                exact
-                path="/ambush"
-                element={
-                  <PrivateRoute>
-                    <Ambush />
-                  </PrivateRoute>
-                }
-              ></Route>
+        <TimeProvider>
+          <CharacterProvider>
+            <Global styles={GlobalStyles} />
+            <ResetCSS />
+            <NavBar />
+            <BrowserRouter>
+              <Routes>
+                {/* Private */}
+                <Route
+                  exact
+                  path="/play"
+                  element={
+                    <PrivateRoute>
+                      <Journal />
+                    </PrivateRoute>
+                  }
+                ></Route>
+                <Route
+                  exact
+                  path="/robbery"
+                  element={
+                    <PrivateRoute>
+                      <Robbery />
+                    </PrivateRoute>
+                  }
+                ></Route>
+                <Route
+                  exact
+                  path="/hospital"
+                  element={
+                    <PrivateRoute>
+                      <Hospital />
+                    </PrivateRoute>
+                  }
+                ></Route>
+                <Route
+                  exact
+                  path="/ambush"
+                  element={
+                    <PrivateRoute>
+                      <Ambush />
+                    </PrivateRoute>
+                  }
+                ></Route>
 
-              <Route exact path="/" element={<Home />} />
-              <Route exact path="/whitelist" element={<Whitelist />} />
-              <Route exact path="/whitepaper" element={<Whitepaper />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-          <Footer />
-        </CharacterProvider>
+                <Route exact path="/" element={<Home />} />
+                <Route exact path="/whitelist" element={<Whitelist />} />
+                <Route exact path="/whitepaper" element={<Whitepaper />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+            <Footer />
+          </CharacterProvider>
+        </TimeProvider>
       </ChakraProvider>
     </S.MainDiv>
   );
